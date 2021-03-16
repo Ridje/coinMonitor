@@ -113,7 +113,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_symbol.setText(asset.getSymbol());
             tvAsset_change_24hrs.setText(Locales.formanCurrencyWithPercents(asset.getChangePercent24Hr()));
             tvAsset_market_24hrs.setText(Locales.formatCompactCurrency(asset.getVolumeUsd24Hr()));
-            if (asset.getChangePercent24Hr().compareTo(BigDecimal.ZERO) < 0) {
+            if (asset.getChangePercent24Hr() != null && asset.getChangePercent24Hr().compareTo(BigDecimal.ZERO) < 0) {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.negative_number, tvAsset_change_24hrs.getContext().getTheme()));
             } else {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));

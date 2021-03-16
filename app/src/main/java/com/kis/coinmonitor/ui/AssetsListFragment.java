@@ -123,7 +123,7 @@ public class AssetsListFragment extends Fragment {
             public void onResponse(Call<Assets> call, Response<Assets> response) {
                 recyclerViewAdapter.removeLoadingBar();
                 recyclerViewAdapter.addAssets(response.body().getData());
-                currentOffset = recyclerViewAdapter.getItemCount();
+                currentOffset += LIMIT_PER_DOWNLOAD;
                 isLoading = false;
             }
 

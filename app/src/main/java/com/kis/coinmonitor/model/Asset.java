@@ -13,6 +13,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.kis.coinmonitor.utils.BigDecimalDeserializer;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -40,25 +44,25 @@ public class Asset implements Parcelable {
     @JsonProperty("name")
     private String name;
     @JsonProperty("supply")
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal supply;
     @JsonProperty("maxSupply")
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal maxSupply;
     @JsonProperty("marketCapUsd")
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    @JsonDeserialize (using = BigDecimalDeserializer.class)
     private BigDecimal marketCapUsd;
     @JsonProperty("volumeUsd24Hr")
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal volumeUsd24Hr;
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
     @JsonProperty("priceUsd")
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal priceUsd;
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
     @JsonProperty("changePercent24Hr")
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal changePercent24Hr;
     @JsonProperty("vwap24Hr")
-    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal vwap24Hr;
     @JsonProperty("explorer")
     private String explorer;
