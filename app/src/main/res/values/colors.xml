@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="negative_number">#C6FA0808</color>
+    <color name="positive_number">#1EAC3D</color>
 </resources>
