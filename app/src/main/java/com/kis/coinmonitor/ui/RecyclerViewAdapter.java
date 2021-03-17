@@ -34,7 +34,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void addAsset(Asset asset) {
         mItemList.add(asset);
-        notifyDataSetChanged();
     }
 
     public void addLoadingBar() {
@@ -43,7 +42,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void removeLast() {
         mItemList.remove(mItemList.size() - 1);
-        notifyDataSetChanged();
     }
 
     public void removeLoadingBar() {

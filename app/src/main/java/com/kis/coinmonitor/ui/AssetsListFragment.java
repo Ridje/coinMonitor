@@ -34,7 +34,13 @@ public class AssetsListFragment extends Fragment {
     APIConnector connector = APIConnector.getAPIConnector();
     ArrayList<Asset> listOfAssets = new ArrayList<>();
     private Integer currentOffset = 0;
-    private final Integer LIMIT_PER_DOWNLOAD = 20;
+    private final Integer LIMIT_PER_DOWNLOAD = 5;
+    private Thread getAssetsThread;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     volatile boolean isLoading = false;
 
@@ -82,9 +88,11 @@ public class AssetsListFragment extends Fragment {
         initAdapter();
         initScrollListener();
         if (listOfAssets.isEmpty()) {
-            loadMore();
+            getAssetsThread = new Thread(() -> loadMore());
+            getAssetsThread.start();
         }
     }
+
 
     private void initAdapter() {
         recyclerViewAdapter = new RecyclerViewAdapter(listOfAssets);
@@ -103,25 +111,26 @@ public class AssetsListFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
 
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
                 if (!isLoading) {
                     if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerViewAdapter.getItemCount() - 1) {
-                        {
-                            loadMore();
-                        }
+                        Thread getAssetsThread = new Thread(() -> loadMore());
+                        getAssetsThread.start();
                     }
                 }
             }
         });
     }
 
-    private void loadMore() {
+    private synchronized void loadMore() {
         isLoading = true;
         recyclerViewAdapter.addLoadingBar();
+        getActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
         connector.getAssets(null, null, LIMIT_PER_DOWNLOAD, currentOffset, new Callback<Assets>() {
             @Override
             public void onResponse(Call<Assets> call, Response<Assets> response) {
+                if (!isAdded()) return;
                 recyclerViewAdapter.removeLoadingBar();
+                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
                 recyclerViewAdapter.addAssets(response.body().getData());
                 currentOffset += LIMIT_PER_DOWNLOAD;
                 isLoading = false;
@@ -129,7 +138,9 @@ public class AssetsListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Assets> call, Throwable t) {
+                if (!isAdded()) return;
                 recyclerViewAdapter.removeLoadingBar();
+                getActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
                 isLoading = false;
             }
         });
