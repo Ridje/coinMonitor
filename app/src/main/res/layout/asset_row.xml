@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="1"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -43,7 +43,6 @@
         </LinearLayout>
 
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/asset_price_usd"
             android:layout_width="0dp"
@@ -64,7 +63,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:gravity="center_vertical|end"
-                android:text="0%"/>
+                android:text="0%" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/asset_volume_24hrs"

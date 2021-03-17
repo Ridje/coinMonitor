@@ -1,6 +1,6 @@
 package com.kis.coinmonitor.network;
 
-import com.kis.coinmonitor.model.Assets;
+import com.kis.coinmonitor.model.standardAPI.Assets;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

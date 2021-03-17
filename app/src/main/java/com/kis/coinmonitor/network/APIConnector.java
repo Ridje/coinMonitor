@@ -2,7 +2,7 @@ package com.kis.coinmonitor.network;
 
 import androidx.annotation.Nullable;
 
-import com.kis.coinmonitor.model.Assets;
+import com.kis.coinmonitor.model.standardAPI.Assets;
 
 import retrofit2.Call;
 import retrofit2.Callback;

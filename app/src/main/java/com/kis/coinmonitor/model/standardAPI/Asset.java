@@ -1,4 +1,4 @@
-package com.kis.coinmonitor.model;
+package com.kis.coinmonitor.model.standardAPI;
 
 import android.os.Parcel;
 import android.os.Parcelable;

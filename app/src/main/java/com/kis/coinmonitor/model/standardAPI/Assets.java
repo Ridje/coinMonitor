@@ -1,11 +1,15 @@
-package com.kis.coinmonitor.model;
+package com.kis.coinmonitor.model.standardAPI;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,6 +29,7 @@ public class Assets {
         return assets;
     }
 
+
     @JsonProperty("data")
     public void setData(List<Asset> data) {
         this.assets = data;
@@ -39,7 +44,5 @@ public class Assets {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
-
-
 
 }

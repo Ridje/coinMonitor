@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kis.coinmonitor.R;
-import com.kis.coinmonitor.model.Asset;
+import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.utils.Locales;
 
 import java.math.BigDecimal;
