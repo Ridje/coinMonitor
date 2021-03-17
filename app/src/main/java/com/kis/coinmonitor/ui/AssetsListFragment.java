@@ -128,7 +128,10 @@ public class AssetsListFragment extends Fragment {
         connector.getAssets(null, null, LIMIT_PER_DOWNLOAD, currentOffset, new Callback<Assets>() {
             @Override
             public void onResponse(Call<Assets> call, Response<Assets> response) {
-                if (!isAdded()) return;
+                if (!isAdded())  {
+                    isLoading = false;
+                    return;
+                }
                 recyclerViewAdapter.removeLoadingBar();
                 requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
                 recyclerViewAdapter.addAssets(response.body().getData());
@@ -138,9 +141,12 @@ public class AssetsListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Assets> call, Throwable t) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    isLoading = false;
+                    return;
+                }
                 recyclerViewAdapter.removeLoadingBar();
-                getActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
+                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
                 isLoading = false;
             }
         });
