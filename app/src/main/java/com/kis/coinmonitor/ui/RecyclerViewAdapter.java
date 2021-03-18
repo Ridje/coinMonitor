@@ -1,5 +1,8 @@
 package com.kis.coinmonitor.ui;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.graphics.drawable.TransitionDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kis.coinmonitor.R;
@@ -59,11 +65,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mItemList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
+
     abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
         }
-
         abstract void bind(Asset asset);
     }
 
@@ -75,9 +81,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView tvAsset_symbol;
         TextView tvAsset_change_24hrs;
         TextView tvAsset_market_24hrs;
+        CardView cardView;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            cardView = itemView.findViewById(R.id.asset_holder);
             tvAsset_name = itemView.findViewById(R.id.asset_name);
             tvAsset_price_usd = itemView.findViewById(R.id.asset_price_usd);
             tvAsset_rank = itemView.findViewById(R.id.asset_rank);
@@ -87,6 +94,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void bind(Asset asset) {
+
             tvAsset_name.setText(asset.getName());
             tvAsset_price_usd.setText(Locales.formatCurrency(asset.getPriceUsd()));
             tvAsset_rank.setText(asset.getRank().toString());
@@ -99,6 +107,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
         }
+
     }
 
     private class LoadingViewHolder extends RecyclerViewHolder {

@@ -36,7 +36,7 @@ public class AssetsListFragment extends Fragment
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
     List<Asset> listOfAssets = new ArrayList<>();
-    private final Integer LIMIT_PER_DOWNLOAD = 20;
+    private final Integer LIMIT_PER_DOWNLOAD = 100;
     private CachedPrices cachePrices = new CachedPrices();
     public Integer mCurrentOffset = 0;
 
@@ -112,6 +112,7 @@ public class AssetsListFragment extends Fragment
     private void initAdapter() {
         recyclerViewAdapter = new RecyclerViewAdapter(listOfAssets);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.getItemAnimator().setChangeDuration(600);
     }
 
     private void initScrollListener() {
