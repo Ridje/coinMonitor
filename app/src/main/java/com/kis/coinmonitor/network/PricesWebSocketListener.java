@@ -4,24 +4,24 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class AssetWebSocketListener extends WebSocketListener {
+public class PricesWebSocketListener extends WebSocketListener {
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
-    private OnMessageAccepted mOnMessageAcceptedCallback;
+    private final OnWebsocketMessageAccepted mOnWebsocketMessageAcceptedCallback;
 
-    public AssetWebSocketListener(OnMessageAccepted callback) {
+    public PricesWebSocketListener(OnWebsocketMessageAccepted callback) {
         super();
-        mOnMessageAcceptedCallback = callback;
+        mOnWebsocketMessageAcceptedCallback = callback;
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        mOnMessageAcceptedCallback.onFailure();
+        mOnWebsocketMessageAcceptedCallback.onWebsocketConnectionFailure();
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        mOnMessageAcceptedCallback.onResponce(text);
+        mOnWebsocketMessageAcceptedCallback.onWebsocketMessageAccepted(text);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.kis.coinmonitor.concurrency.assetsdownload;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.Assets;
 import com.kis.coinmonitor.network.APIConnector;
@@ -34,18 +36,25 @@ public class TaskDownloadAssets implements Runnable {
 
     @Override
     public void run() {
-        mListener.onTaskRunned();
-        Log.e("assets_download", Thread.currentThread().getName() + "runned");
+        mListener.onTaskRan();
+        Log.e("assets_download", Thread.currentThread().getName() + "ran");
         mConnector.getAssets(mSearch, mSearch, mLimit, mOffset, new Callback<Assets>() {
             @Override
-            public void onResponse(Call<Assets> call, Response<Assets> response) {
-                List<Asset> assetsToAdd = response.body().getData();
-                Log.e("assets_download", String.format("%s thread added element(s) with key(s) %s", Thread.currentThread().getName(), assetsToAdd.stream().map(Asset::getId).collect(Collectors.joining(","))));
-                mListener.onResponce(assetsToAdd);
+            public void onResponse(@NonNull Call<Assets> call, @NonNull Response<Assets> response) {
+                List<Asset> assetsToAdd = null;
+                String listOfAddedKeys = "";
+                if (response.body() != null) {
+                    assetsToAdd = response.body().getData();
+                    listOfAddedKeys = assetsToAdd.stream().map(Asset::getId).collect(Collectors.joining(","));
+                } else {
+                    mListener.onFailure();
+                }
+                Log.e("assets_download", String.format("%s thread added element(s) with key(s) %s", Thread.currentThread().getName(), listOfAddedKeys));
+                mListener.onResponse(assetsToAdd);
             }
 
             @Override
-            public void onFailure(Call<Assets> call, Throwable t) {
+            public void onFailure(@NonNull Call<Assets> call, @NonNull Throwable t) {
                 mListener.onFailure();
             }
         });

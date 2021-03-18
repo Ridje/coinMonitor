@@ -3,7 +3,6 @@ package com.kis.coinmonitor.utils;
 import android.icu.text.CompactDecimalFormat;
 import android.icu.util.Currency;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;

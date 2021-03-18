@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 
 import com.kis.coinmonitor.model.standardAPI.Assets;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import retrofit2.Call;
@@ -15,7 +14,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public final class APIConnector {
     public static final String API_URL = "https://api.coincap.io/v2/";
 
-    Retrofit retrofit = null;
+    Retrofit retrofit;
     private static APIConnector connectorInstance = null;
 
     private APIConnector() {

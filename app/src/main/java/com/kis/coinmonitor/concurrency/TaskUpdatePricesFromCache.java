@@ -1,11 +1,8 @@
 package com.kis.coinmonitor.concurrency;
 
 
-import android.util.Log;
-
-import com.kis.coinmonitor.model.CachedPrices;
+import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
-import com.kis.coinmonitor.ui.AssetsListFragment;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,7 +24,6 @@ public class TaskUpdatePricesFromCache implements Runnable {
 
     @Override
     public void run() {
-        mCallback.onStartUpdatePrices();
 
         for (Map.Entry<String, Stack<BigDecimal>> entry : mCachePrices.entrySet()) {
             for (int i = 0; i < mAssets.size(); i++) {

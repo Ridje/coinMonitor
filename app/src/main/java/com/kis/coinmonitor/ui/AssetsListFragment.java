@@ -20,7 +20,7 @@ import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChanges;
 import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChangesListener;
 import com.kis.coinmonitor.concurrency.TaskUpdatePricesFromCache;
 import com.kis.coinmonitor.concurrency.UpdateablePrices;
-import com.kis.coinmonitor.model.CachedPrices;
+import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 
 import java.util.ArrayList;
@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 
 
 public class AssetsListFragment extends Fragment
-        implements TaskDownloadAssetsListener<Asset>, TaskListenPricesChangesListener, UpdateablePrices {
+        implements TaskDownloadAssetsListener, TaskListenPricesChangesListener, UpdateablePrices {
 
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
-    List<Asset> listOfAssets = new ArrayList<>();
+    final List<Asset> listOfAssets = new ArrayList<>();
     private final Integer LIMIT_PER_DOWNLOAD = 100;
-    private CachedPrices cachePrices = new CachedPrices();
+    private final CachedPrices cachePrices = new CachedPrices();
     public Integer mCurrentOffset = 0;
 
     private static ExecutorService serviceDownloadAssets;
@@ -154,12 +154,12 @@ public class AssetsListFragment extends Fragment
     }
 
     @Override
-    public void onTaskRunned() {
+    public void onTaskRan() {
         mCurrentOffset += LIMIT_PER_DOWNLOAD;
     }
 
     @Override
-    public void onResponce(List<Asset> list) {
+    public void onResponse(List list) {
         if (!isAdded()) { return; }
         requireActivity().runOnUiThread(() -> mProgressBarView.setVisibility(View.GONE));
         recyclerViewAdapter.addAssets(list);
@@ -170,22 +170,12 @@ public class AssetsListFragment extends Fragment
 
     @Override
     public void onFailure() {
-
+        // TODO: 19-Mar-21 don't know yet what to do decide later
     }
-
     @Override
     public void onPricesUpdated(Integer itemPosition) {
         if (!isAdded()) { return; }
         requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyItemChanged(itemPosition));
     }
 
-    @Override
-    public void onStartUpdatePrices() {
-
-    }
-
-    @Override
-    public void onPauseUpdatePrices() {
-
-    }
 }

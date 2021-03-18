@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingStart="10sp"
+                android:paddingEnd="10sp"
                 android:text="bitcoin" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -40,6 +41,7 @@
                 android:foregroundGravity="center_vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="10sp"
+                android:paddingEnd="10sp"
                 android:text="BTC" />
         </LinearLayout>
 
@@ -74,6 +76,7 @@
                 android:foregroundGravity="center_vertical"
                 android:gravity="center_vertical|end"
                 android:paddingStart="10sp"
+                android:paddingEnd="10sp"
                 android:text="0" />
         </LinearLayout>
     </LinearLayout>

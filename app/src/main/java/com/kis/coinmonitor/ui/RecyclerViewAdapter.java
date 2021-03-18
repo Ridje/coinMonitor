@@ -1,8 +1,5 @@
 package com.kis.coinmonitor.ui;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.graphics.drawable.TransitionDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kis.coinmonitor.R;
@@ -28,7 +23,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int VIEW_TYPE_LOADING = 1;
 
 
-    public List<Asset> mItemList;
+    public final List<Asset> mItemList;
 
     public RecyclerViewAdapter(List<Asset> itemList) {
         mItemList = itemList;
@@ -66,22 +61,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    abstract static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
         }
         abstract void bind(Asset asset);
     }
 
-    public class ItemViewHolder extends RecyclerViewHolder {
+    private static class ItemViewHolder extends RecyclerViewHolder {
 
-        TextView tvAsset_name;
-        TextView tvAsset_price_usd;
-        TextView tvAsset_rank;
-        TextView tvAsset_symbol;
-        TextView tvAsset_change_24hrs;
-        TextView tvAsset_market_24hrs;
-        CardView cardView;
+        final TextView tvAsset_name;
+        final TextView tvAsset_price_usd;
+        final TextView tvAsset_rank;
+        final TextView tvAsset_symbol;
+        final TextView tvAsset_change_24hrs;
+        final TextView tvAsset_market_24hrs;
+        final CardView cardView;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.asset_holder);
@@ -110,9 +105,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    private class LoadingViewHolder extends RecyclerViewHolder {
+    private static class LoadingViewHolder extends RecyclerViewHolder {
 
-        ProgressBar progressBar;
+        final ProgressBar progressBar;
 
         public LoadingViewHolder(@NonNull View itemView) {
             super(itemView);

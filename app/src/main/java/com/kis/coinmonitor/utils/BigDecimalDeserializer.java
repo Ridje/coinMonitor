@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class BigDecimalDeserializer extends NumberDeserializers.BigDecimalDeserializer {
 
     @Override
-    public BigDecimal getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+    public BigDecimal getNullValue(DeserializationContext ctxt) {
         return new BigDecimal(0);
     }
 }

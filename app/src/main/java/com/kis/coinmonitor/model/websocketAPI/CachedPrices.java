@@ -1,6 +1,4 @@
-package com.kis.coinmonitor.model;
-
-import com.kis.coinmonitor.model.websocketAPI.Prices;
+package com.kis.coinmonitor.model.websocketAPI;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -41,10 +39,6 @@ public class CachedPrices {
             clear(key);
         }
         count = 0;
-    }
-
-    public synchronized boolean isEmpty() {
-        return count <= 0;
     }
 
     public CachedPrices clearWithCopy() {

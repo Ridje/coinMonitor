@@ -2,16 +2,16 @@ package com.kis.coinmonitor.concurrency.priceupdater;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kis.coinmonitor.model.CachedPrices;
+import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.websocketAPI.Prices;
-import com.kis.coinmonitor.network.AssetWebSocketListener;
-import com.kis.coinmonitor.network.OnMessageAccepted;
+import com.kis.coinmonitor.network.PricesWebSocketListener;
+import com.kis.coinmonitor.network.OnWebsocketMessageAccepted;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 
-public class TaskListenPricesChanges implements Runnable, OnMessageAccepted {
+public class TaskListenPricesChanges implements Runnable, OnWebsocketMessageAccepted {
 
     OkHttpClient mHttpClient;
     WebSocket mWebsocketPrices;
@@ -48,7 +48,7 @@ public class TaskListenPricesChanges implements Runnable, OnMessageAccepted {
             if (mAssetsChanged) {
                 closeWebsocket(CODE_OK, CLOSING_REASON_RECREATE_WEBSOCKET);
                 mRequest = new Request.Builder().url(URL_PRICES + mAssetsParam).build();
-                mWebsocketPrices = mHttpClient.newWebSocket(mRequest, new AssetWebSocketListener(this));
+                mWebsocketPrices = mHttpClient.newWebSocket(mRequest, new PricesWebSocketListener(this));
                 mAssetsChanged = false;
             }
             try {
@@ -74,7 +74,7 @@ public class TaskListenPricesChanges implements Runnable, OnMessageAccepted {
     }
 
     @Override
-    public void onResponce(String textResponse) {
+    public void onWebsocketMessageAccepted(String textResponse) {
         try {
             synchronized (this) {
                 mPrices.push(new ObjectMapper()
@@ -83,12 +83,12 @@ public class TaskListenPricesChanges implements Runnable, OnMessageAccepted {
             }
 
         } catch (JsonProcessingException e) {
-            onFailure();
+            onWebsocketConnectionFailure();
         }
     }
 
     @Override
-    public void onFailure() {
+    public void onWebsocketConnectionFailure() {
         // TODO: 18-Mar-21 Decide what to do on Failure
     }
 }
