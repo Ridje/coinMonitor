@@ -1,7 +1,5 @@
 package com.kis.coinmonitor.model.websocketAPI;
 
-import android.graphics.Paint;
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import java.util.HashMap;

@@ -11,56 +11,43 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kis.coinmonitor.R;
-import com.kis.coinmonitor.model.websocketAPI.Prices;
-import com.kis.coinmonitor.network.APIConnector;
+import com.kis.coinmonitor.concurrency.assetsdownload.TaskDownloadAssets;
+import com.kis.coinmonitor.concurrency.assetsdownload.TaskDownloadAssetsListener;
+import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChanges;
+import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChangesListener;
+import com.kis.coinmonitor.concurrency.TaskUpdatePricesFromCache;
+import com.kis.coinmonitor.concurrency.UpdateablePrices;
+import com.kis.coinmonitor.model.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
-import com.kis.coinmonitor.model.standardAPI.Assets;
-import com.kis.coinmonitor.network.AssetWebSocketListener;
-import com.kis.coinmonitor.network.OnMessageAccepted;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.WebSocket;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class AssetsListFragment extends Fragment {
+public class AssetsListFragment extends Fragment
+        implements TaskDownloadAssetsListener<Asset>, TaskListenPricesChangesListener, UpdateablePrices {
 
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
-    APIConnector connector = APIConnector.getAPIConnector();
     List<Asset> listOfAssets = new ArrayList<>();
-    private Integer currentOffset = 0;
-    private final Integer LIMIT_PER_DOWNLOAD = 25;
-    private List<Prices> cacheList = new ArrayList<>();
-    private Thread getAssetsThread;
-    String assetsKeysList;
-    Request request;
-    OkHttpClient httpClient;
-    WebSocket websocketPrices;
+    private final Integer LIMIT_PER_DOWNLOAD = 20;
+    private CachedPrices cachePrices = new CachedPrices();
+    public Integer mCurrentOffset = 0;
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+    private static ExecutorService serviceDownloadAssets;
+    private ProgressBar mProgressBarView;
+    private String updatedableAssetsList;
+    Thread taskListenToPricesChanges = null;
 
-    volatile boolean isLoading = false;
+    private static final String ASSETS_KEY = "com.kis.coinmonitor.ui.assets";
 
-    public AssetsListFragment() {
-    }
+    public AssetsListFragment() {}
 
     public static AssetsListFragment newInstance() {
         AssetsListFragment fragment = new AssetsListFragment();
@@ -72,71 +59,55 @@ public class AssetsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            currentOffset = savedInstanceState.getInt("currentOffset");
-            if (savedInstanceState.getParcelableArrayList("assets") != null)
-                listOfAssets = savedInstanceState.getParcelableArrayList("assets");
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (!isLoading) {
-            outState.putInt("currentOffset", currentOffset);
-            outState.putParcelableArrayList("assets", (ArrayList<Asset>) recyclerViewAdapter.mItemList);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View inflatedView = inflater.inflate(R.layout.fragment_assets_list, container, false);
-
-        return inflatedView;
+        return inflater.inflate(R.layout.fragment_assets_list, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.assets_list_recycler_view);
+        mProgressBarView = view.findViewById(R.id.assets_list_progress_bar);
         initAdapter();
-        initScrollListener();
-        httpClient = new OkHttpClient();
-        if (listOfAssets.isEmpty()) {
-            getAssetsThread = new Thread(() -> loadMore());
-            getAssetsThread.start();
+        restoreAssetsFromSavedState(savedInstanceState);
+        if (serviceDownloadAssets == null) {
+            serviceDownloadAssets = Executors.newFixedThreadPool(1);
+            dowloadMore();
         }
+        initScrollListener();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.interrupted()) {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (cacheList.isEmpty()) {
-                        continue;
-                    }
-                    Prices processedPrices = cacheList.get(cacheList.size() - 1);
-                    for (Map.Entry<String, String> entry: processedPrices.getPrices().entrySet()) {
-                        for (int i = 0; i < listOfAssets.size() - 1; i++) {
-                            if (listOfAssets.get(i).getId().equals(entry.getKey())) {
-                                listOfAssets.get(i).setPriceUsd(new BigDecimal(entry.getValue()));
-                                final int position = i;
-                                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyItemChanged(position));
-                            }
-                        }
-                    }
-
-                    cacheList.clear();
-                }
-            }
-        }).start();
+        taskListenToPricesChanges = new Thread(new TaskListenPricesChanges(updatedableAssetsList, cachePrices, this));
+        taskListenToPricesChanges.start();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ASSETS_KEY, (ArrayList<Asset>) recyclerViewAdapter.mItemList);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (taskListenToPricesChanges != null) {
+            taskListenToPricesChanges.interrupt();
+        }
+    }
+
+    private void restoreAssetsFromSavedState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getParcelableArrayList(ASSETS_KEY) != null) {
+                List<Asset> savedListOfAssets = savedInstanceState.getParcelableArrayList(ASSETS_KEY);
+                recyclerViewAdapter.addAssets(savedListOfAssets);
+                mCurrentOffset = savedListOfAssets.size();
+                compileAssetsParameter();
+            }
+        }
+    }
 
     private void initAdapter() {
         recyclerViewAdapter = new RecyclerViewAdapter(listOfAssets);
@@ -155,69 +126,65 @@ public class AssetsListFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
 
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (!isLoading) {
-                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerViewAdapter.getItemCount() - 1) {
-                        Thread getAssetsThread = new Thread(() -> loadMore());
-                        getAssetsThread.start();
-                    }
+                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerViewAdapter.getItemCount() - 1) {
+                    dowloadMore();
                 }
             }
         });
     }
 
-    private synchronized void loadMore() {
-        isLoading = true;
-        recyclerViewAdapter.addLoadingBar();
-        getActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
-        connector.getAssets(null, null, LIMIT_PER_DOWNLOAD, currentOffset, new Callback<Assets>() {
-            @Override
-            public void onResponse(Call<Assets> call, Response<Assets> response) {
-                if (!isAdded())  {
-                    isLoading = false;
-                    return;
-                }
-                recyclerViewAdapter.removeLoadingBar();
-                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
-                recyclerViewAdapter.addAssets(response.body().getData());
-                currentOffset += LIMIT_PER_DOWNLOAD;
-                isLoading = false;
-                assetsKeysList = String.join(",", listOfAssets.stream().map(asset -> asset.getId()).collect(Collectors.toList()));
-                request = new Request.Builder().url("wss://ws.coincap.io/prices?assets=" + assetsKeysList).build();
-                if (websocketPrices != null) {
-                    websocketPrices.close(1000, "recreating");
-                    websocketPrices = null;
-                }
-                websocketPrices = httpClient.newWebSocket(request, new AssetWebSocketListener(new OnMessageAccepted() {
-                    @Override
-                    public void onResponce(String textResponse) {
-                        try {
-                            cacheList.add(new ObjectMapper()
-                                    .readerFor(Prices.class)
-                                    .readValue(textResponse));
 
-                        } catch (JsonProcessingException e) {
-                            onFailure();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure() {
-
-                    }
-                }));
-            }
-
-            @Override
-            public void onFailure(Call<Assets> call, Throwable t) {
-                if (!isAdded()) {
-                    isLoading = false;
-                    return;
-                }
-                recyclerViewAdapter.removeLoadingBar();
-                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
-                isLoading = false;
-            }
-        });
+    private void dowloadMore() {
+        if (!isAdded()) { return; }
+        requireActivity().runOnUiThread(() -> mProgressBarView.setVisibility(View.VISIBLE));
+        serviceDownloadAssets.execute(new TaskDownloadAssets(null, null, LIMIT_PER_DOWNLOAD, mCurrentOffset, this));
     }
 
+    private synchronized void compileAssetsParameter() {
+        updatedableAssetsList = listOfAssets.stream().map(Asset::getId).collect(Collectors.joining(","));
+        if (taskListenToPricesChanges != null) {
+            TaskListenPricesChanges.assetsListChanged(updatedableAssetsList);
+        }
+    }
+
+    @Override
+    public void onTaskPaused() {
+        serviceDownloadAssets.execute(new TaskUpdatePricesFromCache(cachePrices.clearWithCopy(), listOfAssets, this));
+    }
+
+    @Override
+    public void onTaskRunned() {
+        mCurrentOffset += LIMIT_PER_DOWNLOAD;
+    }
+
+    @Override
+    public void onResponce(List<Asset> list) {
+        if (!isAdded()) { return; }
+        requireActivity().runOnUiThread(() -> mProgressBarView.setVisibility(View.GONE));
+        recyclerViewAdapter.addAssets(list);
+        if (!isAdded()) { return; }
+        requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyDataSetChanged());
+        compileAssetsParameter();
+    }
+
+    @Override
+    public void onFailure() {
+
+    }
+
+    @Override
+    public void onPricesUpdated(Integer itemPosition) {
+        if (!isAdded()) { return; }
+        requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyItemChanged(itemPosition));
+    }
+
+    @Override
+    public void onStartUpdatePrices() {
+
+    }
+
+    @Override
+    public void onPauseUpdatePrices() {
+
+    }
 }

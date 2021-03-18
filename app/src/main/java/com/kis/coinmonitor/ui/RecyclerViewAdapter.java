@@ -21,6 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
+
     public List<Asset> mItemList;
 
     public RecyclerViewAdapter(List<Asset> itemList) {
@@ -29,25 +30,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void addAssets(List<Asset> assets) {
         mItemList.addAll(assets);
-        notifyDataSetChanged();
-    }
-
-    public void addAsset(Asset asset) {
-        mItemList.add(asset);
-    }
-
-    public void addLoadingBar() {
-        addAsset(null);
-    }
-
-    public void removeLast() {
-        mItemList.remove(mItemList.size() - 1);
-    }
-
-    public void removeLoadingBar() {
-        if (mItemList.size() > 0 && mItemList.get(mItemList.size() - 1) == null ) {
-            removeLast();
-        }
     }
 
     @NonNull

@@ -173,6 +173,7 @@ public class Asset implements Parcelable {
         return priceUsd;
     }
 
+
     @JsonProperty("priceUsd")
     public void setPriceUsd(BigDecimal priceUsd) {
         this.priceUsd = priceUsd;

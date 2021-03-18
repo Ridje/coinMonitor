@@ -4,6 +4,9 @@ import androidx.annotation.Nullable;
 
 import com.kis.coinmonitor.model.standardAPI.Assets;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -18,7 +21,7 @@ public final class APIConnector {
     private APIConnector() {
         retrofit =
                 new Retrofit.Builder()
-                        .baseUrl(API_URL)
+                        .baseUrl(API_URL).callbackExecutor(Executors.newSingleThreadExecutor())
                         .addConverterFactory(JacksonConverterFactory.create())
                         .build();
     }
