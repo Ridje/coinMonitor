@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">coinMonitor</string>
+    <string name="asset">asset</string>
+    <string name="coin">coin</string>
+</resources>
