@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class AssetsListFragment extends Fragment
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
     final List<Asset> listOfAssets = new ArrayList<>();
-    private final Integer LIMIT_PER_DOWNLOAD = 100;
+    private final Integer LIMIT_PER_DOWNLOAD = 20;
     private final CachedPrices cachePrices = new CachedPrices();
     public Integer mCurrentOffset = 0;
 
@@ -112,7 +113,7 @@ public class AssetsListFragment extends Fragment
     private void initAdapter() {
         recyclerViewAdapter = new RecyclerViewAdapter(listOfAssets);
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.getItemAnimator().setChangeDuration(600);
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     private void initScrollListener() {
@@ -133,7 +134,6 @@ public class AssetsListFragment extends Fragment
             }
         });
     }
-
 
     private void dowloadMore() {
         if (!isAdded()) { return; }

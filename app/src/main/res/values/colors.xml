@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="negative_number">#C6FA0808</color>
     <color name="positive_number">#1EAC3D</color>
+    <color name="positive_changes">#8FD33030</color>
+    <color name="negative_changes">#8F3EE663</color>
 </resources>

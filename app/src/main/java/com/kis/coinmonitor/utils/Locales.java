@@ -5,6 +5,7 @@ import android.icu.util.Currency;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Locale;
 
 public class Locales {
@@ -37,6 +38,7 @@ public class Locales {
     public static NumberFormat getNumberFormatCurrency() {
         if (numberFormatCurrency == null) {
             numberFormatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
+            ((DecimalFormat) numberFormatCurrency).setParseBigDecimal(true);
         }
         return numberFormatCurrency;
     }
@@ -54,5 +56,16 @@ public class Locales {
             compactCurrencyDecimalFormat.setCurrency(Currency.getInstance(Locale.US));
         }
         return compactCurrencyDecimalFormat;
+    }
+
+    public static Number parseCurrency(String parseFrom){
+        if (parseFrom == null) {
+            throw new RuntimeException(new ParseException(parseFrom, 0));
+        }
+        try {
+            return Locales.getNumberFormatCurrency().parse(parseFrom);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

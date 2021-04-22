@@ -1,13 +1,24 @@
 package com.kis.coinmonitor.ui;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kis.coinmonitor.R;
@@ -15,13 +26,11 @@ import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.utils.Locales;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.List;
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final int VIEW_TYPE_ITEM = 0;
-    private final int VIEW_TYPE_LOADING = 1;
-
 
     public final List<Asset> mItemList;
 
@@ -33,21 +42,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mItemList.addAll(assets);
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asset_row, parent, false);
             return new ItemViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asset_loading, parent, false);
-            return new LoadingViewHolder(view);
-        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        ((RecyclerViewHolder) viewHolder).bind(mItemList.get(position));
+        viewHolder.setIsRecyclable(false);
+        ((ItemViewHolder) viewHolder).bind(mItemList.get(position));
     }
 
     @Override
@@ -55,20 +61,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mItemList == null ? 0 : mItemList.size();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return mItemList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
-    }
 
-
-    abstract static class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        public RecyclerViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-        abstract void bind(Asset asset);
-    }
-
-    private static class ItemViewHolder extends RecyclerViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         final TextView tvAsset_name;
         final TextView tvAsset_price_usd;
@@ -77,6 +71,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView tvAsset_change_24hrs;
         final TextView tvAsset_market_24hrs;
         final CardView cardView;
+        private Boolean firstInit = true;
+        final ValueAnimator positiveChange;
+        final ValueAnimator negativeChange;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.asset_holder);
@@ -86,9 +83,37 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_symbol = itemView.findViewById(R.id.asset_symbol);
             tvAsset_change_24hrs = itemView.findViewById(R.id.asset_change_24hrs);
             tvAsset_market_24hrs = itemView.findViewById(R.id.asset_volume_24hrs);
+
+            positiveChange = ObjectAnimator.ofInt(cardView, "CardBackgroundColor",
+                    cardView.getCardBackgroundColor().getDefaultColor(),
+                    ContextCompat.getColor(cardView.getContext(), R.color.negative_changes));
+            positiveChange.setDuration(550);
+            positiveChange.setEvaluator(new ArgbEvaluator());
+            positiveChange.setRepeatCount(1);
+            positiveChange.setRepeatMode(ValueAnimator.REVERSE);
+
+            negativeChange = ObjectAnimator.ofInt(cardView, "CardBackgroundColor",
+                    cardView.getCardBackgroundColor().getDefaultColor(),
+                    ContextCompat.getColor(cardView.getContext(), R.color.positive_changes));
+            negativeChange.setDuration(550);
+            negativeChange.setEvaluator(new ArgbEvaluator());
+            negativeChange.setRepeatCount(1);
+            negativeChange.setInterpolator(new AccelerateInterpolator());
+            negativeChange.setRepeatMode(ValueAnimator.REVERSE);
         }
 
+
         public void bind(Asset asset) {
+
+            if (!firstInit) {
+                if (((BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText())).compareTo(asset.getPriceUsd()) == -1) {
+                    positiveChange.start();
+                } else if (((BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText())).compareTo(asset.getPriceUsd()) == 1) {
+                    negativeChange.start();
+                }
+            }
+
+            firstInit = false;
 
             tvAsset_name.setText(asset.getName());
             tvAsset_price_usd.setText(Locales.formatCurrency(asset.getPriceUsd()));
@@ -105,17 +130,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    private static class LoadingViewHolder extends RecyclerViewHolder {
-
-        final ProgressBar progressBar;
-
-        public LoadingViewHolder(@NonNull View itemView) {
-            super(itemView);
-            progressBar = itemView.findViewById(R.id.assets_list_progress_bar);
-        }
-
-        void bind(Asset asset) {
-        }
-    }
 
 }
