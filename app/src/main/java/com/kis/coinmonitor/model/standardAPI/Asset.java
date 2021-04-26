@@ -60,8 +60,17 @@ public class Asset implements Parcelable {
     @JsonProperty("explorer")
     private String explorer;
 
-    public Asset() {
+    private AssetHistory history;
 
+    public void setHistory(AssetHistory history) {
+        this.history = history;
+    }
+
+    public AssetHistory getHistory() {
+        return history;
+    }
+
+    public Asset() {
     }
 
     protected Asset(Parcel in) {

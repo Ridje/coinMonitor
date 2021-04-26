@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.kis.coinmonitor.R;
@@ -21,18 +24,26 @@ import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChanges;
 import com.kis.coinmonitor.concurrency.priceupdater.TaskListenPricesChangesListener;
 import com.kis.coinmonitor.concurrency.TaskUpdatePricesFromCache;
 import com.kis.coinmonitor.concurrency.UpdateablePrices;
+import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
+import com.kis.coinmonitor.network.APIConnector;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class AssetsListFragment extends Fragment
-        implements TaskDownloadAssetsListener, TaskListenPricesChangesListener, UpdateablePrices {
+        implements TaskDownloadAssetsListener, TaskListenPricesChangesListener, UpdateablePrices, RecyclerViewAdapter.OnItemClickListener {
 
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
@@ -40,10 +51,12 @@ public class AssetsListFragment extends Fragment
     private final Integer LIMIT_PER_DOWNLOAD = 20;
     private final CachedPrices cachePrices = new CachedPrices();
     public Integer mCurrentOffset = 0;
+    private static final String DEFAULT_GRAPH_INTERVAL = "m5";
+    private static final Long DEFAULT_GRAPH_PERIOD_HOURS = (long) (27 * 3600000);
 
     private static ExecutorService serviceDownloadAssets;
     private ProgressBar mProgressBarView;
-    private String updatedableAssetsList;
+    private String updatableAssetsList;
     Thread taskListenToPricesChanges = null;
 
     private static final String ASSETS_KEY = "com.kis.coinmonitor.ui.assets";
@@ -77,11 +90,11 @@ public class AssetsListFragment extends Fragment
         restoreAssetsFromSavedState(savedInstanceState);
         if (serviceDownloadAssets == null) {
             serviceDownloadAssets = Executors.newFixedThreadPool(1);
-            dowloadMore();
+            downloadMore();
         }
         initScrollListener();
 
-        taskListenToPricesChanges = new Thread(new TaskListenPricesChanges(updatedableAssetsList, cachePrices, this));
+        taskListenToPricesChanges = new Thread(new TaskListenPricesChanges(updatableAssetsList, cachePrices, this));
         taskListenToPricesChanges.start();
     }
 
@@ -114,6 +127,7 @@ public class AssetsListFragment extends Fragment
         recyclerViewAdapter = new RecyclerViewAdapter(listOfAssets);
         recyclerView.setAdapter(recyclerViewAdapter);
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        recyclerViewAdapter.setOnItemClickListener(this);
     }
 
     private void initScrollListener() {
@@ -129,22 +143,22 @@ public class AssetsListFragment extends Fragment
 
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerViewAdapter.getItemCount() - 1) {
-                    dowloadMore();
+                    downloadMore();
                 }
             }
         });
     }
 
-    private void dowloadMore() {
+    private void downloadMore() {
         if (!isAdded()) { return; }
         requireActivity().runOnUiThread(() -> mProgressBarView.setVisibility(View.VISIBLE));
         serviceDownloadAssets.execute(new TaskDownloadAssets(null, null, LIMIT_PER_DOWNLOAD, mCurrentOffset, this));
     }
 
     private synchronized void compileAssetsParameter() {
-        updatedableAssetsList = listOfAssets.stream().map(Asset::getId).collect(Collectors.joining(","));
+        updatableAssetsList = listOfAssets.stream().map(Asset::getId).collect(Collectors.joining(","));
         if (taskListenToPricesChanges != null) {
-            TaskListenPricesChanges.assetsListChanged(updatedableAssetsList);
+            TaskListenPricesChanges.assetsListChanged(updatableAssetsList);
         }
     }
 
@@ -176,6 +190,38 @@ public class AssetsListFragment extends Fragment
     public void onPricesUpdated(Integer itemPosition) {
         if (!isAdded()) { return; }
         requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyItemChanged(itemPosition));
+    }
+
+    @Override
+    public void onItemClick(View view, int position, boolean isExpanded) {
+
+        if (isExpanded) {
+            Asset asset = recyclerViewAdapter.getAsset(position);
+            APIConnector connector = APIConnector.getAPIConnector();
+            connector.getAssetHistory(asset.getId()
+                    , DEFAULT_GRAPH_INTERVAL
+                    , System.currentTimeMillis() - DEFAULT_GRAPH_PERIOD_HOURS
+                    , System.currentTimeMillis(), new Callback<AssetHistory>() {
+                        @Override
+                        public void onResponse(Call<AssetHistory> call, Response<AssetHistory> response) {
+                            if (response.body() != null) {
+                                asset.setHistory(response.body());
+                                requireActivity().runOnUiThread(() -> recyclerViewAdapter.notifyItemChanged(position));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AssetHistory> call, Throwable t) {
+                        }
+                    });
+        } else {
+            recyclerViewAdapter.notifyItemChanged(position);
+        }
+    }
+
+    @Override
+    public void onButtonItemClick(View view, int position) {
+
     }
 
 }

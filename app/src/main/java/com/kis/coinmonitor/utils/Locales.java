@@ -21,7 +21,7 @@ public class Locales {
         return getNumberFormatCurrency().format(value);
     }
 
-    public static String formanCurrencyWithPercents(Number value) {
+    public static String formatCurrencyWithPercents(Number value) {
         if (value == null) {
             return "null";
         }
