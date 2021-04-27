@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/asset_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -30,6 +31,14 @@
                     android:gravity="center"
                     android:text="1"
                     android:textSize="15sp" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/asset_image_visible"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:shapeAppearanceOverlay="@style/circleImageView"
+                    app:srcCompat="@mipmap/ic_default_asset_image" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -69,7 +78,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.3"
+                    android:layout_weight="1.6"
                     android:orientation="vertical">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -89,7 +98,7 @@
                         android:gravity="center_vertical|end"
                         android:paddingStart="10sp"
                         android:paddingEnd="10sp"
-                        android:text="0"/>
+                        android:text="0" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

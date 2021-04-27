@@ -3,4 +3,9 @@
     <style name="NegativeNumber" parent="Theme.CoinMonitor">
         <item name="android:textColor">@color/negative_number</item>
     </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

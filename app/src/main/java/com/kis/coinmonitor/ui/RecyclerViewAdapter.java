@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,12 +24,14 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.AssetHistoryValue;
 import com.kis.coinmonitor.utils.Locales;
 import com.kis.coinmonitor.utils.TimestampFormatter;
+import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,6 +99,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final LinearLayout hiddenContainer;
         final CardView visibleCardView;
         final Button buttonShowDetails;
+        final ImageView visibleAssetImage;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.asset_holder);
@@ -109,6 +113,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
             assetChart = itemView.findViewById(R.id.asset_hidden_chart);
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
+            visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
 
             positiveChange = ObjectAnimator.ofInt(visibleCardView, "CardBackgroundColor",
                     visibleCardView.getCardBackgroundColor().getDefaultColor(),
@@ -167,6 +172,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
+
+            Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
             hiddenContainer.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             if (isExpanded && asset.getHistory() != null) {
