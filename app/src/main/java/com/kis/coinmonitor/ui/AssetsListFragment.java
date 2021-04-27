@@ -5,16 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.kis.coinmonitor.R;
@@ -29,8 +27,6 @@ import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.network.APIConnector;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +49,7 @@ public class AssetsListFragment extends Fragment
     public Integer mCurrentOffset = 0;
     private static final String DEFAULT_GRAPH_INTERVAL = "m5";
     private static final Long DEFAULT_GRAPH_PERIOD_HOURS = (long) (27 * 3600000);
+    private static final String LOG_TAG = AssetsListFragment.class.getPackage().toString() + "AssetsListFragment";
 
     private static ExecutorService serviceDownloadAssets;
     private ProgressBar mProgressBarView;
@@ -73,17 +70,19 @@ public class AssetsListFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, this.toString() + " : onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, this.toString() + " : onCreateView");
         return inflater.inflate(R.layout.fragment_assets_list, container, false);
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(LOG_TAG, this.toString() + " : onViewCreated");
         recyclerView = view.findViewById(R.id.assets_list_recycler_view);
         mProgressBarView = view.findViewById(R.id.assets_list_progress_bar);
         initAdapter();
@@ -94,22 +93,56 @@ public class AssetsListFragment extends Fragment
         }
         initScrollListener();
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, this.toString() + " : onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         taskListenToPricesChanges = new Thread(new TaskListenPricesChanges(updatableAssetsList, cachePrices, this));
         taskListenToPricesChanges.start();
+        Log.d(LOG_TAG, this.toString() + " : onResume");
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (taskListenToPricesChanges != null) {
+            Log.d(LOG_TAG, this.toString() + " : Try to interrupt taskListenToPricesChanges");
+            taskListenToPricesChanges.interrupt();
+        }
+        Log.d(LOG_TAG, this.toString() + " : onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, this.toString() + " : onStop");
+    }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, this.toString() + " : onSaveInstanceState");
         outState.putParcelableArrayList(ASSETS_KEY, (ArrayList<Asset>) recyclerViewAdapter.mItemList);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(LOG_TAG, this.toString() + " : onDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (taskListenToPricesChanges != null) {
-            taskListenToPricesChanges.interrupt();
-        }
+        Log.d(LOG_TAG, this.toString() + " : onDestroy");
     }
 
     private void restoreAssetsFromSavedState(Bundle savedInstanceState) {
@@ -164,6 +197,7 @@ public class AssetsListFragment extends Fragment
 
     @Override
     public void onTaskPaused() {
+        Log.d(LOG_TAG, this.toString() + " : TaskListenPricesChanges paused, starting TaskUpdatePricesFromCache");
         serviceDownloadAssets.execute(new TaskUpdatePricesFromCache(cachePrices.clearWithCopy(), listOfAssets, this));
     }
 
