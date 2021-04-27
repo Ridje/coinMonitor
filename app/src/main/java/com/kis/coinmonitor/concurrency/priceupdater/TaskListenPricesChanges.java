@@ -1,5 +1,7 @@
 package com.kis.coinmonitor.concurrency.priceupdater;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
@@ -26,6 +28,7 @@ public class TaskListenPricesChanges implements Runnable, OnWebsocketMessageAcce
     private static final String CLOSING_REASON_OK = "Goodbye!";
     private static final String CLOSING_REASON_RECREATE_WEBSOCKET = "See you in 3...2...1...";
     private static final String URL_PRICES = "wss://ws.coincap.io/prices?assets=";
+    private static final String LOG_TAG = TaskListenPricesChanges.class.getPackage().toString() + ".log";
 
 
     public TaskListenPricesChanges(String assetsParam, CachedPrices prices, TaskListenPricesChangesListener listener) {
@@ -52,11 +55,13 @@ public class TaskListenPricesChanges implements Runnable, OnWebsocketMessageAcce
                 mAssetsChanged = false;
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
-                closeWebsocket(CODE_OK, CLOSING_REASON_OK);
+                Log.d(LOG_TAG, "Task interrupted, websocket closed");
+                break;
             }
             synchronized (this) {
+                Log.d(LOG_TAG, "Task paused, we are awaiting for update prices in memory");
                 mListener.onTaskPaused();
             }
         }

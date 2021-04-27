@@ -1,6 +1,8 @@
 package com.kis.coinmonitor.concurrency;
 
 
+import android.util.Log;
+
 import com.kis.coinmonitor.model.websocketAPI.CachedPrices;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 
@@ -15,6 +17,7 @@ public class TaskUpdatePricesFromCache implements Runnable {
     public CachedPrices mCachePrices;
     public List<Asset> mAssets;
     public UpdateablePrices mCallback;
+    public static final String LOG_TAG = TaskUpdatePricesFromCache.class.getName();
 
     public TaskUpdatePricesFromCache(CachedPrices cachePrices, List<Asset> assets, UpdateablePrices callback) {
         this.mCachePrices = cachePrices;
@@ -24,6 +27,7 @@ public class TaskUpdatePricesFromCache implements Runnable {
 
     @Override
     public void run() {
+        Log.d(LOG_TAG, "TaskUpdatePricesFromCache started");
 
         for (Map.Entry<String, Stack<BigDecimal>> entry : mCachePrices.entrySet()) {
             for (int i = 0; i < mAssets.size(); i++) {
@@ -38,5 +42,6 @@ public class TaskUpdatePricesFromCache implements Runnable {
                 }
             }
         }
+        Log.d(LOG_TAG, "TaskUpdatePricesFromCache finished");
     }
 }
