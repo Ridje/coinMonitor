@@ -3,6 +3,7 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -21,6 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.MarkerImage;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -29,6 +33,7 @@ import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.AssetHistoryValue;
+import com.kis.coinmonitor.utils.CurrencyMarkerView;
 import com.kis.coinmonitor.utils.Locales;
 import com.kis.coinmonitor.utils.TimestampFormatter;
 import com.squareup.picasso.Picasso;
@@ -163,7 +168,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
 
+
         public void bind(Asset asset) {
+
+            boolean priceChanged = false;
 
             if (tvAsset_name.getText().equals(asset.getName())) {
                 BigDecimal oldPriceValue = (BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText());
@@ -171,8 +179,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 BigDecimal differenceWithNewValue = oldPriceValue.subtract(newFormattedValue);
                 if (differenceWithNewValue.compareTo(new BigDecimal(0)) == 1) {
                     positiveChange.start();
+                    priceChanged = true;
                 } else if (differenceWithNewValue.compareTo(new BigDecimal(0)) == -1) {
                     negativeChange.start();
+                    priceChanged = true;
                 }
             }
 
@@ -192,14 +202,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
             hiddenContainer.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-            if (isExpanded && asset.getHistory() != null) {
+            if (isExpanded && asset.getHistory() != null && priceChanged == false) {
 
                 AssetHistory currentAssetHistory = asset.getHistory();
                 List<Entry> dataHistoryValues = new ArrayList<>();
 
-                for (AssetHistoryValue historyValue : currentAssetHistory.getData()) {
-                    dataHistoryValues.add(new Entry((float)(historyValue.getTime().getTime()), historyValue.getPriceUsd().floatValue()));
+                List<AssetHistoryValue> dataHistory = currentAssetHistory.getData();
+                AssetHistoryValue firstPoint = dataHistory.get(0);
+                AssetHistoryValue lastPoint = dataHistory.get(dataHistory.size() - 1);
+
+                for (int i = 0; i < dataHistory.size() - 1; i++) {
+                    dataHistoryValues.add(new Entry((float)(dataHistory.get(i).getTime().getTime()), dataHistory.get(i).getPriceUsd().floatValue()));
                 }
+
 
                 LineDataSet dataSet = new LineDataSet(dataHistoryValues, "Label");
                 LineData lineData = new LineData(dataSet);
@@ -215,18 +230,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 dataSet.setFillColor(colorBelowLine);
                 dataSet.setColor(colorLine);
+                dataSet.setDrawVerticalHighlightIndicator(false);
+                dataSet.setHighlightLineWidth(2f);
 
-                int descriptonColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
+                int descriptionColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
                 assetChart.getXAxis().setValueFormatter(new TimestampFormatter());
                 assetChart.getXAxis().setLabelCount(14);
-                assetChart.getXAxis().setTextColor(descriptonColor);
+                assetChart.getXAxis().setTextColor(descriptionColor);
                 assetChart.getXAxis().setDrawGridLines(false);
 
-                assetChart.getAxisRight().setTextColor(descriptonColor);
+                MarkerView myMarker = new CurrencyMarkerView(assetChart.getContext(), R.layout.currency_marker_view);
+                myMarker.setOffset(-60, -60);
+                assetChart.setMarker(myMarker);
+
+                assetChart.getAxisRight().setTextColor(descriptionColor);
                 assetChart.getAxisLeft().setDrawLabels(false);
                 assetChart.setData(lineData);
                 assetChart.getLegend().setEnabled(false);
                 assetChart.getDescription().setText("");
+                assetChart.setDoubleTapToZoomEnabled(false);
+
                 assetChart.invalidate();
             }
         }
