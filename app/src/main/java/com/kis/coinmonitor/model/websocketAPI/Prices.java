@@ -19,4 +19,5 @@ public class Prices {
     public Map<String, String> getPrices() {
         return mPrices;
     }
+
 }
