@@ -35,20 +35,40 @@ import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public final List<Asset> mItemList;
+    public List<Asset> mItemList;
     private OnItemClickListener itemClickListener;
 
-    public RecyclerViewAdapter(List<Asset> itemList) {
-        mItemList = itemList;
+    public RecyclerViewAdapter() {
+        mItemList = new ArrayList<>();
     }
 
     public void addAssets(List<Asset> assets) {
-        mItemList.addAll(assets);
+        for (Asset asset : assets) {
+            if (!mItemList.contains(asset)) {
+                mItemList.add(asset);
+                this.notifyItemInserted(mItemList.size() - 1);
+            }
+        }
+    }
+
+    public void updateAssets(List<Asset> assets) {
+        for (Asset asset : assets) {
+            updateAsset(asset);
+        }
+    }
+
+    public void updateAsset(Asset asset) {
+        int position = mItemList.indexOf(asset);
+        if (position != -1) {
+            this.notifyItemChanged(position);
+        }
     }
 
     public void setOnItemClickListener(OnItemClickListener itemClickListener){
@@ -73,10 +93,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    public Asset getAsset(int position) {
-        return mItemList.get(position);
-    }
-
     public interface OnItemClickListener {
         void onItemClick(View view , int position, boolean isExpanded);
         void onButtonItemClick(View view, int position);
@@ -92,7 +108,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView tvAsset_change_24hrs;
         final TextView tvAsset_market_24hrs;
         final CardView cardView;
-        private Boolean firstInit = true;
         final ValueAnimator positiveChange;
         final ValueAnimator negativeChange;
         final LineChart assetChart;
@@ -114,6 +129,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             assetChart = itemView.findViewById(R.id.asset_hidden_chart);
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
             visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
+            this.setIsRecyclable(false);
 
             positiveChange = ObjectAnimator.ofInt(visibleCardView, "CardBackgroundColor",
                     visibleCardView.getCardBackgroundColor().getDefaultColor(),
@@ -135,7 +151,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
                     isExpanded = !isExpanded;
-                    this.setIsRecyclable(!isExpanded);
                     itemClickListener.onItemClick(v, getAdapterPosition(), isExpanded);
                 }
             });
@@ -145,15 +160,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     itemClickListener.onButtonItemClick(v, getAdapterPosition());
                 }
             });
-
-
         }
 
 
         public void bind(Asset asset) {
 
             if (tvAsset_name.getText().equals(asset.getName())) {
-                BigDecimal differenceWithNewValue = ((BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText())).subtract(asset.getPriceUsd());
+                BigDecimal oldPriceValue = (BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText());
+                BigDecimal newFormattedValue = (BigDecimal) Locales.parseCurrency(Locales.formatCurrency(asset.getPriceUsd()));
+                BigDecimal differenceWithNewValue = oldPriceValue.subtract(newFormattedValue);
                 if (differenceWithNewValue.compareTo(new BigDecimal(0)) == 1) {
                     positiveChange.start();
                 } else if (differenceWithNewValue.compareTo(new BigDecimal(0)) == -1) {
@@ -172,6 +187,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
+            assetChart.setMinimumHeight((assetChart.getContext().getResources().getDisplayMetrics().heightPixels)/100*50);
 
             Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
@@ -201,7 +217,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 dataSet.setColor(colorLine);
 
                 int descriptonColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
-                assetChart.setMinimumHeight((assetChart.getContext().getResources().getDisplayMetrics().heightPixels)/100*50);
                 assetChart.getXAxis().setValueFormatter(new TimestampFormatter());
                 assetChart.getXAxis().setLabelCount(14);
                 assetChart.getXAxis().setTextColor(descriptonColor);

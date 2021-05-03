@@ -3,8 +3,6 @@ package com.kis.coinmonitor.network;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.Assets;
 
-import java.sql.Timestamp;
-
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -12,6 +10,7 @@ import retrofit2.http.Query;
 
 public final class CoinCapService {
 
+    public static final String HTTPS_API_COINCAP_URL = "https://api.coincap.io/v2/";
 
     public interface AssetsService {
         @GET("assets")
