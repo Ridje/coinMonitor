@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -170,6 +172,12 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
 
     @Override
     public void onButtonItemClick(View view, int position) {
-
+        final Asset asset = recyclerViewAdapter.mItemList.get(position);
+        FragmentManager thisManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = thisManager.beginTransaction();
+        transaction.replace(R.id.fragments_container, AssetFragment.newInstance());
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
