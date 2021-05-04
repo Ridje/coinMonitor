@@ -228,7 +228,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 AssetHistoryValue lastPoint = dataHistory.get(dataHistory.size() - 1);
                 BigDecimal maxPrice = dataHistory.get(0).getPriceUsd();
                 BigDecimal minPrice = dataHistory.get(0).getPriceUsd();
-                BigDecimal changePrice = firstPoint.getPriceUsd().subtract(lastPoint.getPriceUsd());
+                BigDecimal changePrice = lastPoint.getPriceUsd().subtract(firstPoint.getPriceUsd());
                 BigDecimal sum = new BigDecimal(0);
 
                 for (int i = 0; i < dataHistory.size() - 1; i++) {
@@ -251,9 +251,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 hiddenMax.setText(Locales.formatCurrency(maxPrice));
                 hiddenLow.setText(Locales.formatCurrency(minPrice));
                 hiddenAverage.setText(Locales.formatCurrency(avgPrice));
-                hiddenChange.setText(Locales.formatCurrency(changePrice));
 
-                LineDataSet dataSet = new LineDataSet(dataHistoryValues, "Label");
+                hiddenChange.setText(Locales.formatCurrency(changePrice));
+                if (changePrice.compareTo(new BigDecimal(0)) == 1) {
+                    hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.positive_number, hiddenChange.getContext().getTheme()));
+                } else {
+                    hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.negative_number, hiddenChange.getContext().getTheme()));
+                }
+
+                LineDataSet dataSet = new LineDataSet(dataHistoryValues, "Last 27 hours");
                 LineData lineData = new LineData(dataSet);
                 dataSet.setDrawCircles(false);
                 dataSet.setDrawFilled(true);
@@ -282,18 +288,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 myMarker.setOffset(-200, -140);
                 assetChart.setMarker(myMarker);
 
-                //assetChart.setExtraOffsets(0f, 0f, 0f, 0f);
-
                 assetChart.getAxisRight().setDrawAxisLine(false);
                 assetChart.getAxisLeft().setDrawAxisLine(false);
                 assetChart.getAxisRight().setTextColor(descriptionColor);
                 assetChart.getAxisRight().setTextSize(12f);
                 assetChart.getAxisRight().setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
                 assetChart.getAxisLeft().setDrawLabels(false);
-                assetChart.setData(lineData);
-                assetChart.getLegend().setEnabled(false);
-                assetChart.getDescription().setText("");
+                assetChart.getLegend().setEnabled(true);
+                assetChart.getDescription().setEnabled(false);
                 assetChart.setDoubleTapToZoomEnabled(false);
+                assetChart.setData(lineData);
+                assetChart.setViewPortOffsets(0f, 0f, 0f, 200f);
 
                 assetChart.invalidate();
             }
