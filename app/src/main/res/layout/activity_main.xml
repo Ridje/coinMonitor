@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment
-        android:id="@+id/assets_list"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragments_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.kis.coinmonitor.ui.AssetsListFragment"
         tools:layout="@layout/fragment_assets_list">
-    </fragment>
+    </androidx.fragment.app.FragmentContainerView>
 
 </FrameLayout>
