@@ -9,9 +9,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.kis.coinmonitor.ui.AssetsListFragment"
-        tools:layout="@layout/fragment_assets_list">
+        android:layout_height="match_parent">
     </androidx.fragment.app.FragmentContainerView>
 
 </FrameLayout>

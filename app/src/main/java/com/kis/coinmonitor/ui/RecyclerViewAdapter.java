@@ -241,7 +241,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 buttonShowDetails.setVisibility(View.VISIBLE);
 
                 Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
-                hiddenAssetDescription.setText(asset.getName() + "(" + asset.getSymbol() + ")");
+                hiddenAssetDescription.setText(asset.getName() + " (" + asset.getSymbol() + ")");
                 hiddenMax.setText(Locales.formatCurrency(maxPrice));
                 hiddenLow.setText(Locales.formatCurrency(minPrice));
                 hiddenAverage.setText(Locales.formatCurrency(avgPrice));
@@ -292,7 +292,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 assetChart.getDescription().setEnabled(false);
                 assetChart.setDoubleTapToZoomEnabled(false);
                 assetChart.setData(lineData);
-                assetChart.setViewPortOffsets(0f, 0f, 0f, 200f);
 
                 assetChart.invalidate();
             }

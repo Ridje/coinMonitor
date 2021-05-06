@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/circleImageView"
-        app:srcCompat="@mipmap/ic_default_asset_image" />
+        app:srcCompat="@mipmap/ic_default_asset_image"/>
 
     <com.google.android.material.textview.MaterialTextView
         style="@style/TextAppearance.CoinMonitor.Text.MainValue"
@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_asset_name_and_symbol"
         android:textAlignment="center"
+        android:maxWidth="300dp"
         app:layout_constraintBottom_toBottomOf="@+id/asset_details_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/asset_details_image"
