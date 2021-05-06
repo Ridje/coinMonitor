@@ -181,10 +181,7 @@
         </FrameLayout>
 
         <include
-            layout="@layout/asset_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"/>
+            layout="@layout/asset_details"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>
