@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="NegativeNumber" parent="Theme.CoinMonitor">
+    <style name="negativeNumber" parent="Theme.CoinMonitor">
         <item name="android:textColor">@color/negative_number</item>
     </style>
 
@@ -8,4 +8,50 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="Widget.CoinMonitor.Button" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">20dp</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.SpanText.MainValue" parent="TextAppearance.CoinMonitor.Text.MainValue">
+        <item name="android:textSize">48sp</item>
+    </style>
+    
+    <style name="TextAppearance.CoinMonitor.SpanText.Value" parent="">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.SpanText.WithNewLine" parent="">
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.SpanText.Value.ImageClose">
+        <item name="android:layout_marginStart">12dp</item>
+    </style>
+    
+    <style name="TextAppearance.CoinMonitor.SpanText.Value.ImageClose.SignDependable">
+        <item name="android:textColor">@color/positive_number</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.Value" parent="">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">12dp</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.Value.SignDependable">
+        <item name="android:textColor">@color/positive_number</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.WithNewLine" parent="">
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.MainValue" parent="">
+        <item name="android:textSize">36sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+    
 </resources>

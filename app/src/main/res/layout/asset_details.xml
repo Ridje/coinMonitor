@@ -9,20 +9,18 @@
         android:id="@+id/asset_details_image"
         android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/circleImageView"
         app:srcCompat="@mipmap/ic_default_asset_image" />
 
     <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.CoinMonitor.Text.MainValue"
         android:id="@+id/asset_details_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Asset (CurrencyID)"
+        android:text="@string/default_asset_name_and_symbol"
         android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/asset_details_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/asset_details_image"
@@ -31,8 +29,8 @@
     </com.google.android.material.textview.MaterialTextView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
         android:id="@+id/asset_details_high_container"
-        android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -45,14 +43,14 @@
             android:id="@+id/asset_details_high_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HIGH" />
+            android:text="@string/high" />
 
         <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
             android:id="@+id/asset_details_high"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="HIGH_VAL" />
+            android:text="@string/default_asset_priceUSD" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -71,17 +69,18 @@
             android:id="@+id/asset_details_average_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AVERAGE" />
+            android:text="@string/average" />
 
         <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
             android:id="@+id/asset_details_average"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="AVERAGE_VAL" />
+            android:text="@string/default_asset_priceUSD" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
         android:id="@+id/asset_details_low_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,14 +93,14 @@
             android:id="@+id/asset_details_low_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LOW" />
+            android:text="@string/low" />
 
         <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
             android:id="@+id/asset_details_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="LOW_VAL" />
+            android:text="@string/default_asset_priceUSD" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -112,27 +111,27 @@
         app:layout_constraintEnd_toEndOf="@+id/asset_details_average_container"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/asset_details_average_container"
-        app:layout_constraintTop_toBottomOf="@+id/asset_details_average_container">
+        app:layout_constraintTop_toTopOf="@+id/asset_details_low_container">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/asset_details_change_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHANGE" />
+            android:text="@string/change" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/asset_details_change"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.SignDependable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="CHANGE_VAL" />
+            android:text="@string/default_asset_changePercent" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.github.mikephil.charting.charts.LineChart
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
         android:id="@+id/asset_details_chart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="500dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -140,48 +139,58 @@
         app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container" />
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/asset_details_chart"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/asset_details_chart"
         app:layout_constraintTop_toBottomOf="@+id/asset_details_chart"
-        app:tabIndicatorColor="@color/design_default_color_primary"
         app:tabMode="fixed">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1D" />
+            android:text="@string/period_one_day" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1W" />
+            android:text="@string/period_one_week" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1M" />
+            android:text="@string/period_one_month" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3M" />
+            android:text="@string/period_three_month" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="6M" />
+            android:text="@string/period_six_month" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1Y" />
+            android:text="@string/period_one_year" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ALL" />
+            android:text="@string/period_all" />
     </com.google.android.material.tabs.TabLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/asset_button_show_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/more_details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_chart"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
