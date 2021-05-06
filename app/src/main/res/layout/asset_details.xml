@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/asset_details_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/asset_details_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:srcCompat="@mipmap/ic_default_asset_image"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.CoinMonitor.Text.MainValue"
+        android:id="@+id/asset_details_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_asset_name_and_symbol"
+        android:textAlignment="center"
+        android:maxWidth="300dp"
+        app:layout_constraintBottom_toBottomOf="@+id/asset_details_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/asset_details_image"
+        app:layout_constraintTop_toTopOf="@+id/asset_details_image">
+
+    </com.google.android.material.textview.MaterialTextView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
+        android:id="@+id/asset_details_high_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/asset_details_average_container"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_image">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_details_high_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/high" />
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
+            android:id="@+id/asset_details_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_asset_priceUSD" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/asset_details_average_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/asset_details_high_container"
+        app:layout_constraintTop_toTopOf="@+id/asset_details_high_container">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_details_average_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/average" />
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
+            android:id="@+id/asset_details_average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_asset_priceUSD" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
+        android:id="@+id/asset_details_low_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/asset_details_high_container"
+        app:layout_constraintStart_toStartOf="@+id/asset_details_high_container"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_high_container">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_details_low_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/low" />
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.CoinMonitor.Text.Value"
+            android:id="@+id/asset_details_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_asset_priceUSD" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/asset_details_change_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/asset_details_average_container"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/asset_details_average_container"
+        app:layout_constraintTop_toTopOf="@+id/asset_details_low_container">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_details_change_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_details_change"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.SignDependable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_asset_changePercent" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.github.mikephil.charting.charts.LineChart
+        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
+        android:layout_marginTop="20dp"
+        android:id="@+id/asset_details_chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/asset_details_chart"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/asset_details_chart"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_chart"
+        app:tabMode="fixed"
+        android:visibility="invisible">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_one_day" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_one_week" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_one_month" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_three_month" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_six_month" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_one_year" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_all" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/asset_button_show_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/more_details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_chart"
+        android:visibility="invisible"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,6 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,20 +15,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.MarkerImage;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
@@ -42,10 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -120,7 +113,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final ValueAnimator positiveChange;
         final ValueAnimator negativeChange;
         final LineChart assetChart;
-        final LinearLayout hiddenContainer;
+        final ConstraintLayout hiddenContainer;
         final CardView visibleCardView;
         final Button buttonShowDetails;
         final ImageView visibleAssetImage;
@@ -139,17 +132,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_symbol = itemView.findViewById(R.id.asset_symbol);
             tvAsset_change_24hrs = itemView.findViewById(R.id.asset_change_24hrs);
             tvAsset_market_24hrs = itemView.findViewById(R.id.asset_volume_24hrs);
-            hiddenContainer = itemView.findViewById(R.id.asset_hidden_layout);
+            hiddenContainer = itemView.findViewById(R.id.asset_details_layout);
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
-            assetChart = itemView.findViewById(R.id.asset_hidden_chart);
+            assetChart = itemView.findViewById(R.id.asset_details_chart);
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
             visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
-            hiddenMax = itemView.findViewById(R.id.asset_hidden_high_value);
-            hiddenLow = itemView.findViewById(R.id.asset_hidden_low_value);
-            hiddenAverage = itemView.findViewById(R.id.asset_hidden_average_value);
-            hiddenChange = itemView.findViewById(R.id.asset_hidden_change_value);
-            hiddenAssetDescription = itemView.findViewById(R.id.asset_hidden_asset_description);
-            hiddenAssetImage = itemView.findViewById(R.id.asset_image_hidden);
+            hiddenMax = itemView.findViewById(R.id.asset_details_high);
+            hiddenLow = itemView.findViewById(R.id.asset_details_low);
+            hiddenAverage = itemView.findViewById(R.id.asset_details_average);
+            hiddenChange = itemView.findViewById(R.id.asset_details_change);
+            hiddenAssetDescription = itemView.findViewById(R.id.asset_details_description);
+            hiddenAssetImage = itemView.findViewById(R.id.asset_details_image);
             this.setIsRecyclable(false);
 
             positiveChange = ObjectAnimator.ofInt(visibleCardView, "CardBackgroundColor",
@@ -245,9 +238,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 BigDecimal avgPrice = sum.divide(new BigDecimal(dataHistory.size()), RoundingMode.HALF_UP);
                 changePrice = changePrice.divide(firstPoint.getPriceUsd(), RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                buttonShowDetails.setVisibility(View.VISIBLE);
 
                 Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
-                hiddenAssetDescription.setText(asset.getName() + "(" + asset.getSymbol() + ")");
+                hiddenAssetDescription.setText(asset.getName() + " (" + asset.getSymbol() + ")");
                 hiddenMax.setText(Locales.formatCurrency(maxPrice));
                 hiddenLow.setText(Locales.formatCurrency(minPrice));
                 hiddenAverage.setText(Locales.formatCurrency(avgPrice));
@@ -298,7 +292,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 assetChart.getDescription().setEnabled(false);
                 assetChart.setDoubleTapToZoomEnabled(false);
                 assetChart.setData(lineData);
-                assetChart.setViewPortOffsets(0f, 0f, 0f, 200f);
 
                 assetChart.invalidate();
             }

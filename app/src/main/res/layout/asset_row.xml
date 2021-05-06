@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/asset_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,8 +30,8 @@
                     android:layout_width="30sp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="1"
-                    android:textSize="15sp" />
+                    android:text="@string/default_asset_rank"
+                    android:textSize="15sp"/>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/asset_image_visible"
@@ -55,7 +54,7 @@
                         android:gravity="center_vertical"
                         android:paddingStart="10sp"
                         android:paddingEnd="10sp"
-                        android:text="bitcoin" />
+                        android:text="@string/default_asset_name" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/asset_symbol"
@@ -65,7 +64,7 @@
                         android:gravity="center_vertical"
                         android:paddingStart="10sp"
                         android:paddingEnd="10sp"
-                        android:text="BTC" />
+                        android:text="@string/default_asset_symbol" />
                 </LinearLayout>
 
 
@@ -75,7 +74,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center_vertical|end"
-                    android:text="60000" />
+                    android:text="@string/default_asset_priceUSD" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -89,141 +88,23 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="end"
                         android:gravity="center_vertical|end"
-                        android:text="0%" />
+                        android:text="@string/default_asset_changePercent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/asset_volume_24hrs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:foregroundGravity="center_vertical"
                         android:gravity="center_vertical|end"
                         android:paddingStart="10sp"
                         android:paddingEnd="10sp"
-                        android:text="0" />
+                        android:text="@string/default_asset_marketVolume24Hr" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:id="@+id/asset_hidden_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:paddingTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/asset_image_hidden"
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    app:shapeAppearanceOverlay="@style/circleImageView"
-                    app:srcCompat="@mipmap/ic_default_asset_image" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/asset_hidden_asset_description"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="4"
-                    android:text="Asset (CurrencyID)"
-                    android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:textStyle="bold">
-
-                </com.google.android.material.textview.MaterialTextView>
-            </LinearLayout>
-
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="4"
-                android:rowCount="2"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:text="HIGH"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/asset_hidden_high_value"
-                    android:text="HIGH_VAL"
-                    android:textStyle="bold"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:text="AVERAGE"
-                    android:textAlignment="textEnd"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/asset_hidden_average_value"
-                    android:text="AVERAGE_VAL"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:text="LOW"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/asset_hidden_low_value"
-                    android:text="LOW_VAL"
-                    android:textStyle="bold"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:text="CHANGE"
-                    android:textAlignment="textEnd"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/asset_hidden_change_value"
-                    android:text="CHANGE_VAL"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"/>
-
-            </GridLayout>
-
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/asset_hidden_chart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipChildren="false"
-                android:clipToPadding="false" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/asset_button_show_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="More details"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                app:cornerRadius="16dp" />
-        </LinearLayout>
+        <include layout="@layout/asset_details"></include>
 
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>
