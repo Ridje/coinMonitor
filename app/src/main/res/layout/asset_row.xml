@@ -207,7 +207,7 @@
             </GridLayout>
 
             <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/asset_hidden_chart"
+                android:id="@+id/asset_details_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipChildren="false"

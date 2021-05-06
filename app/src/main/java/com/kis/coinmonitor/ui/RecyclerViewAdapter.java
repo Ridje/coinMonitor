@@ -3,9 +3,6 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +17,13 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.MarkerImage;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
@@ -42,10 +35,7 @@ import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -141,7 +131,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_market_24hrs = itemView.findViewById(R.id.asset_volume_24hrs);
             hiddenContainer = itemView.findViewById(R.id.asset_hidden_layout);
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
-            assetChart = itemView.findViewById(R.id.asset_hidden_chart);
+            assetChart = itemView.findViewById(R.id.asset_details_chart);
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
             visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
             hiddenMax = itemView.findViewById(R.id.asset_hidden_high_value);
