@@ -165,7 +165,7 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
     }
 
     @Override
-    public void onItemClick(View view, int position, boolean isExpanded) {
+    public void onItemClick(View view, int position) {
         recyclerViewAdapter.notifyItemChanged(position);
         assetsListViewModel.downloadAssetHistory(recyclerViewAdapter.mItemList.get(position));
     }

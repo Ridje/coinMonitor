@@ -46,6 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public List<Asset> mItemList;
     private OnItemClickListener itemClickListener;
+    private Asset expandedAsset = null;
 
     public RecyclerViewAdapter() {
         mItemList = new ArrayList<>();
@@ -96,14 +97,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     public interface OnItemClickListener {
-        void onItemClick(View view , int position, boolean isExpanded);
+        void onItemClick(View view , int position);
         void onButtonItemClick(View view, int position);
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         final TextView tvAsset_name;
-        Boolean isExpanded = false;
         final TextView tvAsset_price_usd;
         final TextView tvAsset_rank;
         final TextView tvAsset_symbol;
@@ -143,7 +143,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             hiddenChange = itemView.findViewById(R.id.asset_details_change);
             hiddenAssetDescription = itemView.findViewById(R.id.asset_details_description);
             hiddenAssetImage = itemView.findViewById(R.id.asset_details_image);
-            this.setIsRecyclable(false);
 
             positiveChange = ObjectAnimator.ofInt(visibleCardView, "CardBackgroundColor",
                     visibleCardView.getCardBackgroundColor().getDefaultColor(),
@@ -164,8 +163,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
-                    isExpanded = !isExpanded;
-                    itemClickListener.onItemClick(v, getAdapterPosition(), isExpanded);
+                    boolean isRecycable;
+                    Asset CurrentAsset = mItemList.get(getAdapterPosition());
+                    if (expandedAsset == CurrentAsset) {
+                        expandedAsset = null;
+                        isRecycable = true;
+                    } else {
+                        expandedAsset = CurrentAsset;
+                        isRecycable = false;
+                    }
+                    this.setIsRecyclable(isRecycable);
+                    itemClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
 
@@ -210,8 +218,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
-            hiddenContainer.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-            if (isExpanded && asset.getHistory() != null && priceChanged == false) {
+            hiddenContainer.setVisibility(expandedAsset == asset ? View.VISIBLE : View.GONE);
+            if (expandedAsset == asset && asset.getHistory() != null && priceChanged == false) {
 
                 AssetHistory currentAssetHistory = asset.getHistory();
                 List<Entry> dataHistoryValues = new ArrayList<>();
