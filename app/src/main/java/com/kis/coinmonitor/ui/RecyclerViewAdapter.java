@@ -138,12 +138,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             hiddenContainer = itemView.findViewById(R.id.asset_details_hidden_frame);
             hiddenContainer.setVisibility(View.GONE);
             hiddenPlaceholder = itemView.findViewById(R.id.asset_details_layout_placeholder);
-            hiddenPlaceholder.setVisibility(View.GONE);
+            hiddenPlaceholder.setVisibility(View.INVISIBLE);
             hiddenLayoutFrame = itemView.findViewById(R.id.asset_details_layout);
-            hiddenLayoutFrame.setVisibility(itemView.GONE);
+            hiddenLayoutFrame.setVisibility(itemView.INVISIBLE);
 
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
+
             assetChart = itemView.findViewById(R.id.asset_details_chart);
+
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
             visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
             hiddenMax = itemView.findViewById(R.id.asset_details_high);
@@ -178,6 +180,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         isRecycable = true;
                     } else {
                         hiddenPlaceholder.startShimmer();
+                        if (expandedAsset != null) {
+                            notifyItemChanged(mItemList.indexOf(expandedAsset));
+                        }
                         expandedAsset = CurrentAsset;
                         isRecycable = false;
                     }
@@ -223,7 +228,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
-            assetChart.setMinimumHeight((assetChart.getContext().getResources().getDisplayMetrics().heightPixels)/100*35);
 
             Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
@@ -232,10 +236,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 boolean showPlaceholder = asset.getHistory() == null;
 
-                hiddenPlaceholder.setVisibility(showPlaceholder ? View.VISIBLE : View.GONE);
-                hiddenLayoutFrame.setVisibility(showPlaceholder ? View.GONE : View.VISIBLE);
+                hiddenPlaceholder.setVisibility(showPlaceholder ? View.VISIBLE : View.INVISIBLE);
+                hiddenLayoutFrame.setVisibility(showPlaceholder ? View.INVISIBLE : View.VISIBLE);
 
                 if (!showPlaceholder) {
+
+                    hiddenPlaceholder.stopShimmer();
 
                     AssetHistory currentAssetHistory = asset.getHistory();
                     List<Entry> dataHistoryValues = new ArrayList<>();

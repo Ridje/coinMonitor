@@ -181,7 +181,8 @@
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/asset_details_chart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="160dp"
+        app:layout_goneMarginTop="12dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -190,6 +191,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/asset_button_show_details"
+        android:layout_marginTop="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/more_details"

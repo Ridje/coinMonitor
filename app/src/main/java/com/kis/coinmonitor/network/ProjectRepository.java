@@ -73,7 +73,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
                     assetsLiveData.setValue(assets);
                     isAssetsListDownloading.setValue(false);
                     currentOffset += LIMIT_PER_DOWNLOAD;
-                    setupPriceUpdater();
+                    //setupPriceUpdater();
                 }
             }
 
@@ -91,11 +91,11 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
         }
 
         //I am not sure if we always need fresh data or may have 5m delay in worse case
-        if (graphInterval.equals(DEFAULT_GRAPH_INTERVAL) && asset.getHistory() != null &&
-                System.currentTimeMillis() - asset.getHistory().getData().get(asset.getHistory().getData().size() - 1).getTime().getTime() < MS_IN_FIVE_MINUTES) {
-                downloadedAssetHistoryLiveData.setValue(asset);
-                return;
-        }
+//        if (graphInterval.equals(DEFAULT_GRAPH_INTERVAL) && asset.getHistory() != null &&
+//                System.currentTimeMillis() - asset.getHistory().getData().get(asset.getHistory().getData().size() - 1).getTime().getTime() < MS_IN_FIVE_MINUTES) {
+//                downloadedAssetHistoryLiveData.setValue(asset);
+//                return;
+//        }
 
         coinCapAssetsService.assetHistory(asset.getId(), graphInterval, System.currentTimeMillis() - DEFAULT_GRAPH_PERIOD_HOURS_IN_MS, System.currentTimeMillis())
                 .enqueue(new Callback<AssetHistory>() {

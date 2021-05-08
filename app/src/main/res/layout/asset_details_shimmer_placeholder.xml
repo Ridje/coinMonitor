@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/asset_details_layout_placeholder"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="20dp"
     android:clipChildren="false"
     android:clipToPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <View
             android:id="@+id/asset_details_image_placeholder"
@@ -21,13 +21,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <View
             android:id="@+id/asset_details_description_placeholder"
             style="@style/TextAppearance.CoinMonitor.Text.MainValue.Placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
             android:background="@color/placeholder_color"
-            android:text="@string/default_asset_name_and_symbol"
             android:textAlignment="center"
             android:textColor="@color/placeholder_color"
             app:layout_constraintBottom_toBottomOf="@+id/asset_details_image_placeholder"
@@ -35,118 +34,75 @@
             app:layout_constraintStart_toEndOf="@+id/asset_details_image_placeholder"
             app:layout_constraintTop_toTopOf="@+id/asset_details_image_placeholder">
 
-        </com.google.android.material.textview.MaterialTextView>
+        </View>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+
+        <View
             android:id="@+id/asset_details_high_container_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="124dp"
+            android:layout_height="24dp"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
             android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
             app:layout_constraintEnd_toStartOf="@+id/asset_details_average_container_placeholder"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/asset_details_image_placeholder">
+        </View>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_high_title_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/high"
-                android:textColor="@color/placeholder_color" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_high_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/default_asset_priceUSD"
-                android:textColor="@color/placeholder_color" />
-
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <View
             android:id="@+id/asset_details_average_container_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_width="124dp"
+            android:layout_height="24dp"
             android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/asset_details_high_container_placeholder"
             app:layout_constraintTop_toTopOf="@+id/asset_details_high_container_placeholder">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_average_title_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/average" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_average_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/default_asset_priceUSD" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </View>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/asset_details_low_container_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="124dp"
+            android:layout_height="24dp"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
             android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
             app:layout_constraintEnd_toEndOf="@+id/asset_details_high_container_placeholder"
             app:layout_constraintStart_toStartOf="@+id/asset_details_high_container_placeholder"
             app:layout_constraintTop_toBottomOf="@+id/asset_details_high_container_placeholder">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_low_title_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/low" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_low_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/default_asset_priceUSD" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/asset_details_change_container_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_width="124dp"
+            android:layout_height="24dp"
             android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
             app:layout_constraintEnd_toEndOf="@+id/asset_details_average_container_placeholder"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/asset_details_average_container_placeholder"
             app:layout_constraintTop_toTopOf="@+id/asset_details_low_container_placeholder">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_change_title_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/change" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/asset_details_change_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/default_asset_changePercent" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.github.mikephil.charting.charts.LineChart
+        <View
             android:id="@+id/asset_details_chart_placeholder"
             style="@style/TextAppearance.CoinMonitor.Placeholder"
+            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="160dp"
             android:clipChildren="false"
             android:clipToPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container_placeholder" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/asset_button_show_details_placeholder"
+            android:layout_marginVertical="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/more_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/asset_details_chart_placeholder" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.facebook.shimmer.ShimmerFrameLayout>
