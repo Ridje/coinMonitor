@@ -53,5 +53,29 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
     </style>
+
+    <style name="TextAppearance.CoinMonitor.Placeholder" parent="">
+        <item name="android:textColor">@color/placeholder_color</item>
+        <item name="android:background">@color/placeholder_color</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.MainValue.Placeholder">
+        <item name="android:textColor">@color/placeholder_color</item>
+        <item name="android:background">@color/placeholder_color</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.WithNewLine.Placeholder">
+        <item name="android:textColor">@color/placeholder_color</item>
+        <item name="android:background">@color/placeholder_color</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.Value.PlaceHolder">
+        <item name="android:textColor">@color/placeholder_color</item>
+        <item name="android:background">@color/placeholder_color</item>
+    </style>
+
+    <style name="TextAppearance.CoinMonitor.Text.Value.PlaceHolder.WithNewLine">
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
     
 </resources>

@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".ui.AssetFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -32,8 +32,8 @@
                     app:srcCompat="@drawable/shape_rank" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.MainValue"
                     android:id="@+id/asset_fragment_rank"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.MainValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_rank"
@@ -53,18 +53,18 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_currencyPrice" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose"
                     android:id="@+id/asset_fragment_currencyName"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_name_and_symbol"
                     app:layout_constraintBottom_toTopOf="@+id/asset_fragment_currencyPrice"
                     app:layout_constraintStart_toEndOf="@+id/asset_fragment_rankView"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose"
                     android:id="@+id/asset_fragment_currencyPrice"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_priceUSD"
@@ -73,8 +73,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_currencyName" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose.SignDependable"
                     android:id="@+id/asset_fragment_currencyChange"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value.ImageClose.SignDependable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_changePercent"
@@ -94,8 +94,8 @@
                     app:srcCompat="@drawable/up_icon" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:id="@+id/asset_fragment_marketCap_title"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/asset_marketCap"
@@ -106,8 +106,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_rankView" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:id="@+id/asset_fragment_marketCap"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_marketCap"
@@ -128,8 +128,8 @@
                     app:layout_constraintTop_toTopOf="@+id/asset_fragment_marketCap_title" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:id="@+id/asset_fragment_marketVolume"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_marketVolume24Hr"
@@ -139,8 +139,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketVolume_title" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:id="@+id/asset_fragment_marketSupply_title"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/asset_marketSupply"
@@ -148,8 +148,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketCap" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:id="@+id/asset_fragment_marketSupply"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.Value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_marketSupply"
@@ -157,8 +157,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketSupply_title" />
 
                 <com.google.android.material.button.MaterialButton
-                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:id="@+id/asset_fragment_website_button"
+                    style="@style/TextAppearance.CoinMonitor.SpanText.WithNewLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/open_asset_website"
@@ -180,8 +180,8 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
 
-        <include
-            layout="@layout/asset_details"/>
+        <include layout="@layout/asset_details" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </ScrollView>
