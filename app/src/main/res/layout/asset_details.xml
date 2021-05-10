@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/asset_details_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="20dp"
@@ -132,18 +131,6 @@
             android:text="@string/default_asset_changePercent" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <com.github.mikephil.charting.charts.LineChart
-        style="@style/TextAppearance.CoinMonitor.Text.WithNewLine"
-        android:layout_marginTop="20dp"
-        android:id="@+id/asset_details_chart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container" />
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
@@ -151,9 +138,9 @@
         app:layout_constraintEnd_toEndOf="@+id/asset_details_chart"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/asset_details_chart"
-        app:layout_constraintTop_toBottomOf="@+id/asset_details_chart"
+        app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container"
         app:tabMode="fixed"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -191,8 +178,20 @@
             android:text="@string/period_all" />
     </com.google.android.material.tabs.TabLayout>
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/asset_details_chart"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        app:layout_goneMarginTop="12dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/asset_button_show_details"
+        android:layout_marginTop="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/more_details"

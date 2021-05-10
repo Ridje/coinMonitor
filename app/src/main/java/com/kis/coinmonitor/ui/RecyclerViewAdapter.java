@@ -3,23 +3,20 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
@@ -113,7 +110,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final ValueAnimator positiveChange;
         final ValueAnimator negativeChange;
         final LineChart assetChart;
-        final ConstraintLayout hiddenContainer;
+        final View hiddenContainer;
+        final View hiddenLayoutFrame;
         final CardView visibleCardView;
         final Button buttonShowDetails;
         final ImageView visibleAssetImage;
@@ -123,6 +121,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView hiddenChange;
         final TextView hiddenAssetDescription;
         final ImageView hiddenAssetImage;
+        final ShimmerFrameLayout hiddenPlaceholder;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.asset_holder);
@@ -132,9 +131,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_symbol = itemView.findViewById(R.id.asset_symbol);
             tvAsset_change_24hrs = itemView.findViewById(R.id.asset_change_24hrs);
             tvAsset_market_24hrs = itemView.findViewById(R.id.asset_volume_24hrs);
-            hiddenContainer = itemView.findViewById(R.id.asset_details_layout);
+
+            hiddenContainer = itemView.findViewById(R.id.asset_details_hidden_frame);
+            hiddenContainer.setVisibility(View.GONE);
+            hiddenPlaceholder = itemView.findViewById(R.id.asset_details_layout_placeholder);
+            hiddenPlaceholder.setVisibility(View.INVISIBLE);
+            hiddenLayoutFrame = itemView.findViewById(R.id.asset_details_layout);
+            hiddenLayoutFrame.setVisibility(View.INVISIBLE);
+
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
+
             assetChart = itemView.findViewById(R.id.asset_details_chart);
+
             buttonShowDetails = itemView.findViewById(R.id.asset_button_show_details);
             visibleAssetImage = itemView.findViewById(R.id.asset_image_visible);
             hiddenMax = itemView.findViewById(R.id.asset_details_high);
@@ -143,7 +151,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             hiddenChange = itemView.findViewById(R.id.asset_details_change);
             hiddenAssetDescription = itemView.findViewById(R.id.asset_details_description);
             hiddenAssetImage = itemView.findViewById(R.id.asset_details_image);
-
             positiveChange = ObjectAnimator.ofInt(visibleCardView, "CardBackgroundColor",
                     visibleCardView.getCardBackgroundColor().getDefaultColor(),
                     ContextCompat.getColor(visibleCardView.getContext(), R.color.negative_changes));
@@ -163,17 +170,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
-                    boolean isRecycable;
-                    Asset CurrentAsset = mItemList.get(getAdapterPosition());
-                    if (expandedAsset == CurrentAsset) {
+                    int position = getAdapterPosition();
+                    Asset currentAsset = mItemList.get(position);
+                    if (expandedAsset == currentAsset) {
                         expandedAsset = null;
-                        isRecycable = true;
+                        notifyItemChanged(position);
                     } else {
-                        expandedAsset = CurrentAsset;
-                        isRecycable = false;
+                        hiddenPlaceholder.startShimmer();
+                        if (expandedAsset != null) {
+                            notifyItemChanged(mItemList.indexOf(expandedAsset));
+                        }
+                        expandedAsset = currentAsset;
+                        notifyItemChanged(position);
+                        itemClickListener.onItemClick(v, position);
                     }
-                    this.setIsRecyclable(isRecycable);
-                    itemClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
 
@@ -214,94 +224,108 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
-            assetChart.setMinimumHeight((assetChart.getContext().getResources().getDisplayMetrics().heightPixels)/100*35);
 
-            Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
+            Picasso.get()
+                    .load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png")
+                    .error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
             hiddenContainer.setVisibility(expandedAsset == asset ? View.VISIBLE : View.GONE);
-            if (expandedAsset == asset && asset.getHistory() != null && priceChanged == false) {
+            if (expandedAsset == asset && !priceChanged) {
 
-                AssetHistory currentAssetHistory = asset.getHistory();
-                List<Entry> dataHistoryValues = new ArrayList<>();
+                boolean showPlaceholder = asset.getHistory() == null;
 
-                List<AssetHistoryValue> dataHistory = currentAssetHistory.getData();
-                AssetHistoryValue firstPoint = dataHistory.get(0);
-                AssetHistoryValue lastPoint = dataHistory.get(dataHistory.size() - 1);
-                BigDecimal maxPrice = dataHistory.get(0).getPriceUsd();
-                BigDecimal minPrice = dataHistory.get(0).getPriceUsd();
-                BigDecimal changePrice = lastPoint.getPriceUsd().subtract(firstPoint.getPriceUsd());
-                BigDecimal sum = new BigDecimal(0);
+                hiddenPlaceholder.setVisibility(showPlaceholder ? View.VISIBLE : View.INVISIBLE);
+                hiddenLayoutFrame.setVisibility(showPlaceholder ? View.INVISIBLE : View.VISIBLE);
 
-                for (int i = 0; i < dataHistory.size() - 1; i++) {
-                    dataHistoryValues.add(new Entry((float)(dataHistory.get(i).getTime().getTime()), dataHistory.get(i).getPriceUsd().floatValue()));
-                    if (dataHistory.get(i).getPriceUsd().compareTo(maxPrice) == 1) {
-                        maxPrice = dataHistory.get(i).getPriceUsd();
+                if (!showPlaceholder) {
+
+                    hiddenPlaceholder.stopShimmer();
+
+                    AssetHistory currentAssetHistory = asset.getHistory();
+                    List<Entry> dataHistoryValues = new ArrayList<>();
+
+                    List<AssetHistoryValue> dataHistory = currentAssetHistory.getData();
+                    AssetHistoryValue firstPoint = dataHistory.get(0);
+                    AssetHistoryValue lastPoint = dataHistory.get(dataHistory.size() - 1);
+                    BigDecimal maxPrice = dataHistory.get(0).getPriceUsd();
+                    BigDecimal minPrice = dataHistory.get(0).getPriceUsd();
+                    BigDecimal changePrice = lastPoint.getPriceUsd().subtract(firstPoint.getPriceUsd());
+                    BigDecimal sum = new BigDecimal(0);
+
+                    for (int i = 0; i < dataHistory.size() - 1; i++) {
+                        dataHistoryValues.add(new Entry((float) (dataHistory.get(i).getTime().getTime()), dataHistory.get(i).getPriceUsd().floatValue()));
+                        if (dataHistory.get(i).getPriceUsd().compareTo(maxPrice) == 1) {
+                            maxPrice = dataHistory.get(i).getPriceUsd();
+                        }
+
+                        if (dataHistory.get(i).getPriceUsd().compareTo(minPrice) == -1) {
+                            minPrice = dataHistory.get(i).getPriceUsd();
+                        }
+                        sum = sum.add(dataHistory.get(i).getPriceUsd());
                     }
 
-                    if (dataHistory.get(i).getPriceUsd().compareTo(minPrice) == -1) {
-                        minPrice = dataHistory.get(i).getPriceUsd();
+                    BigDecimal avgPrice = sum.divide(new BigDecimal(dataHistory.size()), RoundingMode.HALF_UP);
+                    changePrice = changePrice.divide(firstPoint.getPriceUsd(), RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                    buttonShowDetails.setVisibility(View.VISIBLE);
+
+                    Picasso.get()
+                            .load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png")
+                            .error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
+
+                    hiddenAssetDescription.setText(String.format("%s (%s)", asset.getName(), asset.getSymbol()));
+                    hiddenMax.setText(Locales.formatCurrency(maxPrice));
+                    hiddenLow.setText(Locales.formatCurrency(minPrice));
+                    hiddenAverage.setText(Locales.formatCurrency(avgPrice));
+
+                    hiddenChange.setText(Locales.formatCurrency(changePrice));
+                    if (changePrice.compareTo(new BigDecimal(0)) == 1) {
+                        hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.positive_number, hiddenChange.getContext().getTheme()));
+                    } else {
+                        hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.negative_number, hiddenChange.getContext().getTheme()));
                     }
-                    sum = sum.add(dataHistory.get(i).getPriceUsd());
+
+                    LineDataSet dataSet = new LineDataSet(dataHistoryValues, "Last 27 hours");
+                    LineData lineData = new LineData(dataSet);
+                    dataSet.setDrawCircles(false);
+                    dataSet.setDrawFilled(true);
+                    dataSet.setLineWidth(2f);
+
+                    int colorBelowLine = ContextCompat.getColor(assetChart.getContext(), R.color.positive_changes);
+                    int colorLine = ContextCompat.getColor(assetChart.getContext(), R.color.positive_number);
+                    if (dataHistoryValues.get(0).getY() > dataHistoryValues.get(dataHistoryValues.size() - 1).getY()) {
+                        colorBelowLine = ContextCompat.getColor(assetChart.getContext(), R.color.negative_changes);
+                        colorLine = ContextCompat.getColor(assetChart.getContext(), R.color.negative_number);
+                    }
+                    dataSet.setFillColor(colorBelowLine);
+                    dataSet.setColor(colorLine);
+                    dataSet.setHighlightLineWidth(2f);
+
+                    int descriptionColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
+                    assetChart.getXAxis().setValueFormatter(new TimestampFormatter());
+                    assetChart.getXAxis().setLabelRotationAngle(-90f);
+                    assetChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                    assetChart.getXAxis().setTextColor(descriptionColor);
+                    assetChart.getXAxis().setDrawGridLines(false);
+                    assetChart.getXAxis().setLabelCount(10);
+                    assetChart.getXAxis().setTextSize(14f);
+
+                    MarkerView myMarker = new CurrencyMarkerView(assetChart.getContext(), R.layout.currency_marker_view);
+                    myMarker.setOffset(-200, -140);
+                    assetChart.setMarker(myMarker);
+
+                    assetChart.getAxisRight().setDrawAxisLine(false);
+                    assetChart.getAxisLeft().setDrawAxisLine(false);
+                    assetChart.getAxisRight().setTextColor(descriptionColor);
+                    assetChart.getAxisRight().setTextSize(12f);
+                    assetChart.getAxisRight().setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+                    assetChart.getAxisLeft().setDrawLabels(false);
+                    assetChart.getLegend().setEnabled(true);
+                    assetChart.getDescription().setEnabled(false);
+                    assetChart.setDoubleTapToZoomEnabled(false);
+                    assetChart.setData(lineData);
+
+                    assetChart.invalidate();
                 }
-
-                BigDecimal avgPrice = sum.divide(new BigDecimal(dataHistory.size()), RoundingMode.HALF_UP);
-                changePrice = changePrice.divide(firstPoint.getPriceUsd(), RoundingMode.HALF_UP).multiply(new BigDecimal(100));
-                buttonShowDetails.setVisibility(View.VISIBLE);
-
-                Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
-                hiddenAssetDescription.setText(asset.getName() + " (" + asset.getSymbol() + ")");
-                hiddenMax.setText(Locales.formatCurrency(maxPrice));
-                hiddenLow.setText(Locales.formatCurrency(minPrice));
-                hiddenAverage.setText(Locales.formatCurrency(avgPrice));
-
-                hiddenChange.setText(Locales.formatCurrency(changePrice));
-                if (changePrice.compareTo(new BigDecimal(0)) == 1) {
-                    hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.positive_number, hiddenChange.getContext().getTheme()));
-                } else {
-                    hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.negative_number, hiddenChange.getContext().getTheme()));
-                }
-
-                LineDataSet dataSet = new LineDataSet(dataHistoryValues, "Last 27 hours");
-                LineData lineData = new LineData(dataSet);
-                dataSet.setDrawCircles(false);
-                dataSet.setDrawFilled(true);
-                dataSet.setLineWidth(2f);
-
-                int colorBelowLine = ContextCompat.getColor(assetChart.getContext(), R.color.positive_changes);
-                int colorLine = ContextCompat.getColor(assetChart.getContext(), R.color.positive_number);
-                if (dataHistoryValues.get(0).getY() > dataHistoryValues.get(dataHistoryValues.size() - 1).getY()) {
-                    colorBelowLine = ContextCompat.getColor(assetChart.getContext(), R.color.negative_changes);
-                    colorLine = ContextCompat.getColor(assetChart.getContext(), R.color.negative_number);
-                }
-                dataSet.setFillColor(colorBelowLine);
-                dataSet.setColor(colorLine);
-                dataSet.setHighlightLineWidth(2f);
-
-                int descriptionColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
-                assetChart.getXAxis().setValueFormatter(new TimestampFormatter());
-                assetChart.getXAxis().setLabelRotationAngle(-90f);
-                assetChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-                assetChart.getXAxis().setTextColor(descriptionColor);
-                assetChart.getXAxis().setDrawGridLines(false);
-                assetChart.getXAxis().setLabelCount(10);
-                assetChart.getXAxis().setTextSize(14f);
-
-                MarkerView myMarker = new CurrencyMarkerView(assetChart.getContext(), R.layout.currency_marker_view);
-                myMarker.setOffset(-200, -140);
-                assetChart.setMarker(myMarker);
-
-                assetChart.getAxisRight().setDrawAxisLine(false);
-                assetChart.getAxisLeft().setDrawAxisLine(false);
-                assetChart.getAxisRight().setTextColor(descriptionColor);
-                assetChart.getAxisRight().setTextSize(12f);
-                assetChart.getAxisRight().setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-                assetChart.getAxisLeft().setDrawLabels(false);
-                assetChart.getLegend().setEnabled(true);
-                assetChart.getDescription().setEnabled(false);
-                assetChart.setDoubleTapToZoomEnabled(false);
-                assetChart.setData(lineData);
-
-                assetChart.invalidate();
             }
         }
 

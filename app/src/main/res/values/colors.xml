@@ -13,4 +13,5 @@
     <color name="negative_number">#C6FA0808</color>
     <color name="positive_changes">#8F3EE663</color>
     <color name="negative_changes">#8FD33030</color>
+    <color name="placeholder_color">#dddddd</color>
 </resources>

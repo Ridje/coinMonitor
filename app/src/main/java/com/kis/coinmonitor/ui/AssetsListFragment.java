@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,15 +22,13 @@ import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.viewmodel.AssetsListViewModel;
 
-import java.util.List;
-
-
 public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBarView;
     private AssetsListViewModel assetsListViewModel;
+    private Asset lastExpandedAsset;
 
 
     private static final String LOG_TAG = AssetsListFragment.class.getName();
@@ -166,7 +163,6 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
 
     @Override
     public void onItemClick(View view, int position) {
-        recyclerViewAdapter.notifyItemChanged(position);
         assetsListViewModel.downloadAssetHistory(recyclerViewAdapter.mItemList.get(position));
     }
 
