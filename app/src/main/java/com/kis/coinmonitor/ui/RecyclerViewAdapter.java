@@ -3,19 +3,16 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -140,7 +137,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             hiddenPlaceholder = itemView.findViewById(R.id.asset_details_layout_placeholder);
             hiddenPlaceholder.setVisibility(View.INVISIBLE);
             hiddenLayoutFrame = itemView.findViewById(R.id.asset_details_layout);
-            hiddenLayoutFrame.setVisibility(itemView.INVISIBLE);
+            hiddenLayoutFrame.setVisibility(View.INVISIBLE);
 
             visibleCardView = itemView.findViewById(R.id.asset_visible_cardview);
 
@@ -173,21 +170,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
-                    boolean isRecycable;
-                    Asset CurrentAsset = mItemList.get(getAdapterPosition());
-                    if (expandedAsset == CurrentAsset) {
+                    int position = getAdapterPosition();
+                    Asset currentAsset = mItemList.get(position);
+                    if (expandedAsset == currentAsset) {
                         expandedAsset = null;
-                        isRecycable = true;
+                        notifyItemChanged(position);
                     } else {
                         hiddenPlaceholder.startShimmer();
                         if (expandedAsset != null) {
                             notifyItemChanged(mItemList.indexOf(expandedAsset));
                         }
-                        expandedAsset = CurrentAsset;
-                        isRecycable = false;
+                        expandedAsset = currentAsset;
+                        notifyItemChanged(position);
+                        itemClickListener.onItemClick(v, position);
                     }
-                    this.setIsRecyclable(isRecycable);
-                    itemClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
 
@@ -229,10 +225,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tvAsset_change_24hrs.setTextColor(tvAsset_change_24hrs.getResources().getColor(R.color.positive_number, tvAsset_change_24hrs.getContext().getTheme()));
             }
 
-            Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
+            Picasso.get()
+                    .load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png")
+                    .error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
             hiddenContainer.setVisibility(expandedAsset == asset ? View.VISIBLE : View.GONE);
-            if (expandedAsset == asset && priceChanged == false) {
+            if (expandedAsset == asset && !priceChanged) {
 
                 boolean showPlaceholder = asset.getHistory() == null;
 
@@ -270,8 +268,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     changePrice = changePrice.divide(firstPoint.getPriceUsd(), RoundingMode.HALF_UP).multiply(new BigDecimal(100));
                     buttonShowDetails.setVisibility(View.VISIBLE);
 
-                    Picasso.get().load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png").error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
-                    hiddenAssetDescription.setText(asset.getName() + " (" + asset.getSymbol() + ")");
+                    Picasso.get()
+                            .load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png")
+                            .error(R.mipmap.ic_default_asset_image).into(hiddenAssetImage);
+
+                    hiddenAssetDescription.setText(String.format("%s (%s)", asset.getName(), asset.getSymbol()));
                     hiddenMax.setText(Locales.formatCurrency(maxPrice));
                     hiddenLow.setText(Locales.formatCurrency(minPrice));
                     hiddenAverage.setText(Locales.formatCurrency(avgPrice));
