@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.kis.coinmonitor.MainActivity;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.viewmodel.AssetsListViewModel;
@@ -34,7 +35,6 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
     private static final String LOG_TAG = AssetsListFragment.class.getName();
 
     public AssetsListFragment() {}
-
 
     public static AssetsListFragment newInstance() {
         AssetsListFragment fragment = new AssetsListFragment();
@@ -169,11 +169,6 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
     @Override
     public void onButtonItemClick(View view, int position) {
         final Asset asset = recyclerViewAdapter.mItemList.get(position);
-        FragmentManager thisManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction transaction = thisManager.beginTransaction();
-        transaction.replace(R.id.fragments_container, AssetFragment.newInstance());
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        ((MainActivity) requireActivity()).showFragment(AssetFragment.newInstance(asset.getId()), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN) ;
     }
 }

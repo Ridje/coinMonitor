@@ -11,7 +11,7 @@
     <string name="default_asset_marketCap">$1.07t</string>
     <string name="asset_marketVolume24Hr">Volume (24Hr)</string>
     <string name="default_asset_marketVolume24Hr">$24.81b</string>
-    <string name="asset_marketSupply">Market supply</string>
+    <string name="asset_marketSupply">Supply</string>
     <string name="default_asset_marketSupply">18.70m BTC</string>
     <string name="open_asset_website">Website</string>
     <string name="open_blockchain_info">Explorer</string>
@@ -31,5 +31,15 @@
     <string name="period_six_month">6M</string>
     <string name="period_one_year">1Y</string>
     <string name="period_all">ALL</string>
+
+    <string-array name="allowed_chart_intervals">
+        <item>ONE_DAY</item>
+        <item>ONE_WEEK</item>
+        <item>ONE_MONTH</item>
+        <item>THREE_MONTHS</item>
+        <item>SIX_MONTHS</item>
+        <item>ONE_YEAR</item>
+        <item>ALL</item>
+    </string-array>
 
 </resources>

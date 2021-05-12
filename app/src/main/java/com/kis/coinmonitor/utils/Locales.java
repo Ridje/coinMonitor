@@ -16,6 +16,7 @@ public class Locales {
     private static DecimalFormat numberFormatPercents;
     private static CompactDecimalFormat compactCurrencyDecimalFormat;
     private static SimpleDateFormat simpleDateFormat;
+    private static CompactDecimalFormat compactNumberDecimalFormat;
 
     public static String formatCurrency(Number value) {
         if (value == null) {
@@ -46,6 +47,13 @@ public class Locales {
         return getCompactCurrencyDecimalFormat().format(value);
     }
 
+    public static String formatCompactNumber(Number value) {
+        if (value == null) {
+            return "null";
+        }
+        return getCompactNumberDecimalFormat().format(value);
+    }
+
     public static NumberFormat getNumberFormatCurrency() {
         if (numberFormatCurrency == null) {
             numberFormatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
@@ -67,6 +75,14 @@ public class Locales {
             compactCurrencyDecimalFormat.setCurrency(Currency.getInstance(Locale.US));
         }
         return compactCurrencyDecimalFormat;
+    }
+
+    public static CompactDecimalFormat getCompactNumberDecimalFormat() {
+        if (compactNumberDecimalFormat == null) {
+            compactNumberDecimalFormat = CompactDecimalFormat.getInstance(Locale.US, CompactDecimalFormat.CompactStyle.SHORT);
+            compactNumberDecimalFormat.setMaximumFractionDigits(2);
+        }
+        return compactNumberDecimalFormat;
     }
 
     public static Number parseCurrency(String parseFrom){

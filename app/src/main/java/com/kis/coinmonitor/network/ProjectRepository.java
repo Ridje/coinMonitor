@@ -1,11 +1,13 @@
 package com.kis.coinmonitor.network;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kis.coinmonitor.model.standardAPI.Asset;
+import com.kis.coinmonitor.model.standardAPI.AssetByID;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.Assets;
 import com.kis.coinmonitor.model.websocketAPI.Prices;
@@ -39,6 +41,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
     private final MutableLiveData<List<Asset>> updatedAssetsPricesLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isPriceUpdatingWorks = new MutableLiveData<>();
     private final MutableLiveData<Asset> downloadedAssetHistoryLiveData = new MutableLiveData<>();
+    private final MutableLiveData<AssetHistory> assetHistoryMutableLiveData = new MutableLiveData<>();
     private final List<Asset> assets = new ArrayList<>();
     private PricesWebsocket websocketPricesUpdated;
 
@@ -62,9 +65,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
     }
 
     public void loadAssetsList() {
-
         isAssetsListDownloading.setValue(true);
-
         coinCapAssetsService.assets(null, null, LIMIT_PER_DOWNLOAD, currentOffset).enqueue(new Callback<Assets>() {
             @Override
             public void onResponse(Call<Assets> call, Response<Assets> response) {
@@ -73,7 +74,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
                     assetsLiveData.setValue(assets);
                     isAssetsListDownloading.setValue(false);
                     currentOffset += LIMIT_PER_DOWNLOAD;
-                    setupPriceUpdater();
+                    //setupPriceUpdater();
                 }
             }
 
@@ -86,6 +87,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
     }
 
     public void loadAssetHistory(Asset asset, String graphInterval) {
+
         if (graphInterval == null) {
             graphInterval = DEFAULT_GRAPH_INTERVAL;
         }
@@ -107,11 +109,46 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
                 });
     }
 
+    public MutableLiveData<AssetHistory> loadAssetHistory(@NonNull String assetKey, @NonNull String chartInterval, @NonNull Long chartStart, @NonNull Long chartEnd) {
+
+        coinCapAssetsService.assetHistory(assetKey, chartInterval, chartStart, chartEnd).enqueue(new Callback<AssetHistory>() {
+            @Override
+            public void onResponse(Call<AssetHistory> call, Response<AssetHistory> response) {
+                if (response.isSuccessful()) {
+                    assetHistoryMutableLiveData.setValue(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AssetHistory> call, Throwable t) {
+                //TODO: failure handling
+            }
+        });
+        return assetHistoryMutableLiveData;
+    }
+
+    public MutableLiveData<Asset> loadAssetData(String assetKey) {
+        final MutableLiveData<Asset> loadedAsset = new MutableLiveData<>();
+        coinCapAssetsService.asset(assetKey).enqueue(new Callback<AssetByID>() {
+            @Override
+            public void onResponse(Call<AssetByID> call, Response<AssetByID> response) {
+                if (response.isSuccessful()) {
+                    loadedAsset.setValue(response.body().getAsset());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AssetByID> call, Throwable t) {
+                //TODO: failure handling
+            }
+        });
+        return loadedAsset;
+    }
+
     public void setupPriceUpdater() {
         websocketPricesUpdated.setup(assets.stream().map(Asset::getId).collect(Collectors.joining(",")));
         websocketPricesUpdated.open();
     }
-
 
     public LiveData<Boolean> getIsAssetsListDownloadingLiveData() {
         return isAssetsListDownloading;

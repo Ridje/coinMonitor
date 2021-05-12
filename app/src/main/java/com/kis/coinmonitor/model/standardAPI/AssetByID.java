@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -13,21 +12,21 @@ import java.util.List;
         "data",
         "timestamp"
 })
-public class Assets {
+public class AssetByID {
 
     @JsonProperty("data")
-    private List<Asset> assets = null;
+    private Asset asset = null;
     @JsonProperty("timestamp")
     private Timestamp timestamp;
 
     @JsonProperty("data")
-    public List<Asset> getData() {
-        return assets;
+    public Asset getAsset() {
+        return asset;
     }
 
     @JsonProperty("data")
-    public void setData(List<Asset> data) {
-        this.assets = data;
+    public void setAsset(Asset data) {
+        this.asset = data;
     }
 
     @JsonProperty("timestamp")
