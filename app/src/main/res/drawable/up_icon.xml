@@ -3,5 +3,5 @@
     android:width="100dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <path android:fillColor="@color/positive_changes" android:pathData="M1,21H23L12,2" />
+    <path android:fillColor="@color/positive_number" android:pathData="M1,21H23L12,2" />
 </vector>

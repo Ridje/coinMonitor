@@ -44,6 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public List<Asset> mItemList;
     private OnItemClickListener itemClickListener;
     private Asset expandedAsset = null;
+    private Asset previousExpandedAsset = null;
 
     public RecyclerViewAdapter() {
         mItemList = new ArrayList<>();
@@ -178,9 +179,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         hiddenPlaceholder.startShimmer();
                         if (expandedAsset != null) {
-                            notifyItemChanged(mItemList.indexOf(expandedAsset));
+                            previousExpandedAsset = expandedAsset;
                         }
                         expandedAsset = currentAsset;
+                        notifyItemChanged(mItemList.indexOf(previousExpandedAsset));
                         notifyItemChanged(position);
                         itemClickListener.onItemClick(v, position);
                     }
@@ -277,7 +279,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     hiddenLow.setText(Locales.formatCurrency(minPrice));
                     hiddenAverage.setText(Locales.formatCurrency(avgPrice));
 
-                    hiddenChange.setText(Locales.formatCurrency(changePrice));
+                    hiddenChange.setText(Locales.formatCurrencyWithPercents(changePrice));
                     if (changePrice.compareTo(new BigDecimal(0)) == 1) {
                         hiddenChange.setTextColor(hiddenChange.getResources().getColor(R.color.positive_number, hiddenChange.getContext().getTheme()));
                     } else {
@@ -302,15 +304,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     int descriptionColor = ContextCompat.getColor(assetChart.getContext(), R.color.chart_text_color);
                     assetChart.getXAxis().setValueFormatter(new TimestampFormatter());
-                    assetChart.getXAxis().setLabelRotationAngle(-90f);
+                    assetChart.getXAxis().setLabelRotationAngle(-75f);
                     assetChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                     assetChart.getXAxis().setTextColor(descriptionColor);
                     assetChart.getXAxis().setDrawGridLines(false);
-                    assetChart.getXAxis().setLabelCount(10);
+                    assetChart.getXAxis().setLabelCount(24, true);
                     assetChart.getXAxis().setTextSize(14f);
 
                     MarkerView myMarker = new CurrencyMarkerView(assetChart.getContext(), R.layout.currency_marker_view);
                     myMarker.setOffset(-200, -140);
+                    myMarker.setChartView(assetChart);
                     assetChart.setMarker(myMarker);
 
                     assetChart.getAxisRight().setDrawAxisLine(false);
@@ -325,6 +328,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     assetChart.setData(lineData);
 
                     assetChart.invalidate();
+
                 }
             }
         }

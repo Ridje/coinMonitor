@@ -1,5 +1,7 @@
 package com.kis.coinmonitor.network;
 
+import com.kis.coinmonitor.model.standardAPI.Asset;
+import com.kis.coinmonitor.model.standardAPI.AssetByID;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.Assets;
 
@@ -26,5 +28,10 @@ public final class CoinCapService {
                 @Query("interval") String interval,
                 @Query("start") Long startTimestamp,
                 @Query("end") Long endTimestamp);
+
+        @GET("assets/{asset}")
+        Call<AssetByID> asset(
+                @Path("asset") String assetID
+        );
     }
 }
