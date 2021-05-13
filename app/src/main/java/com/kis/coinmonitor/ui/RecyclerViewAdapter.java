@@ -80,6 +80,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return expandedAsset;
     }
 
+    public void setExpandedAsset(Asset expandedAsset) {
+        this.expandedAsset = expandedAsset;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -175,21 +179,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
-                    int position = getAdapterPosition();
-                    Asset currentAsset = mItemList.get(position);
-                    if (expandedAsset == currentAsset) {
-                        expandedAsset = null;
-                        notifyItemChanged(position);
-                    } else {
-                        hiddenPlaceholder.startShimmer();
-                        if (expandedAsset != null) {
-                            previousExpandedAsset = expandedAsset;
-                        }
-                        expandedAsset = currentAsset;
-                        notifyItemChanged(mItemList.indexOf(previousExpandedAsset));
-                        notifyItemChanged(position);
-                        itemClickListener.onItemClick(v, position);
-                    }
+                    itemClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
 
@@ -235,8 +225,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     .load("https://static.coincap.io/assets/icons/" + asset.getSymbol().toLowerCase() + "@2x.png")
                     .error(R.mipmap.ic_default_asset_image).into(visibleAssetImage);
 
-            hiddenContainer.setVisibility(expandedAsset == asset ? View.VISIBLE : View.GONE);
-            if (expandedAsset == asset && !priceChanged) {
+            hiddenContainer.setVisibility(expandedAsset != null && expandedAsset.equals(asset) ? View.VISIBLE : View.GONE);
+            if (expandedAsset != null && expandedAsset.equals(asset) && !priceChanged) {
 
                 boolean showPlaceholder = asset.getHistory() == null;
 

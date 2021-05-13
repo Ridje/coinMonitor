@@ -31,7 +31,7 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
     private RecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBarView;
     private AssetsListViewModel assetsListViewModel;
-    private static final String KEY_EXPANDED_ASSET = "last_expanded_asset";
+    private static final String KEY_EXPANDED_ASSET_ID = "expanded_asset_id";
 
     private static final String LOG_TAG = AssetsListFragment.class.getName();
 
@@ -156,6 +156,7 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
         assetsListViewModel.getDownloadedAssetHistoryLiveData().observe(getViewLifecycleOwner(), asset ->
         {
             if (asset != null) {
+                recyclerViewAdapter.setExpandedAsset(asset);
                 recyclerViewAdapter.updateAsset(asset);
             }
         });
@@ -164,7 +165,21 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
 
     @Override
     public void onItemClick(View view, int position) {
-        assetsListViewModel.downloadAssetHistory(recyclerViewAdapter.mItemList.get(position));
+        Asset clickedAsset = recyclerViewAdapter.mItemList.get(position);
+        Asset currentExpandedAsset = recyclerViewAdapter.getExpandedAsset();
+
+        Log.i(LOG_TAG, String.format("%s clicked", clickedAsset.getId()));
+
+        if (currentExpandedAsset != null) {
+            recyclerViewAdapter.setExpandedAsset(null);
+            recyclerViewAdapter.notifyItemChanged(recyclerViewAdapter.mItemList.indexOf(currentExpandedAsset));
+        }
+
+        if (clickedAsset != currentExpandedAsset) {
+            recyclerViewAdapter.setExpandedAsset(clickedAsset);
+            recyclerViewAdapter.notifyItemChanged(position);
+            assetsListViewModel.downloadAssetHistory(clickedAsset);
+        }
     }
 
     @Override
