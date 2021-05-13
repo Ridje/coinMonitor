@@ -21,7 +21,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginVertical="16dp">
+                android:layout_marginVertical="16dp"
+                android:id="@+id/asset_fragment_header_container">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/asset_fragment_rankView"
@@ -58,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_asset_name_and_symbol"
+                    android:maxWidth="300dp"
                     app:layout_constraintBottom_toTopOf="@+id/asset_fragment_currencyPrice"
                     app:layout_constraintStart_toEndOf="@+id/asset_fragment_rankView"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -159,9 +161,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketSupply_title" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <include layout="@layout/asset_fragment_header_placeholder"
+                android:visibility="gone"></include>
         </FrameLayout>
 
-        <include layout="@layout/asset_details" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/asset_fragment_details_frame">
+            <include layout="@layout/asset_details" />
+            <include layout="@layout/asset_details_shimmer_placeholder"
+                android:visibility="gone"/>
+        </FrameLayout>
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

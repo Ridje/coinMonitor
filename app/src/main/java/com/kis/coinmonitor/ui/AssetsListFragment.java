@@ -23,14 +23,15 @@ import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.viewmodel.AssetsListViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBarView;
     private AssetsListViewModel assetsListViewModel;
-    private Asset lastExpandedAsset;
-
+    private static final String KEY_EXPANDED_ASSET = "last_expanded_asset";
 
     private static final String LOG_TAG = AssetsListFragment.class.getName();
 

@@ -3,6 +3,8 @@ package com.kis.coinmonitor.model.standardAPI;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -71,6 +73,20 @@ public class Asset implements Parcelable {
     }
 
     public Asset() {
+    }
+
+    @Override
+    public boolean equals(@Nullable @org.jetbrains.annotations.Nullable Object obj) {
+
+        if (!(obj instanceof Asset)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+
+        Asset objAsset = (Asset) obj;
+        return this.getId().equals(objAsset.getId());
     }
 
     protected Asset(Parcel in) {

@@ -5,7 +5,7 @@
     android:id="@+id/asset_details_layout_placeholder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_margin="4dp"
     android:clipChildren="false"
     android:clipToPadding="false">
 
@@ -13,8 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/asset_details_image_placeholder"
+            app:shapeAppearanceOverlay="@style/circleImageView"
             style="@style/TextAppearance.CoinMonitor.Placeholder"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -42,7 +43,7 @@
             android:layout_width="124dp"
             android:layout_height="24dp"
             android:layout_marginTop="12dp"
-            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
+            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
             app:layout_constraintEnd_toStartOf="@+id/asset_details_average_container_placeholder"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +54,7 @@
             android:id="@+id/asset_details_average_container_placeholder"
             android:layout_width="124dp"
             android:layout_height="24dp"
-            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
+            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/asset_details_high_container_placeholder"
@@ -65,7 +66,7 @@
             android:layout_width="124dp"
             android:layout_height="24dp"
             android:layout_marginTop="12dp"
-            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
+            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
             app:layout_constraintEnd_toEndOf="@+id/asset_details_high_container_placeholder"
             app:layout_constraintStart_toStartOf="@+id/asset_details_high_container_placeholder"
             app:layout_constraintTop_toBottomOf="@+id/asset_details_high_container_placeholder">
@@ -76,7 +77,7 @@
             android:id="@+id/asset_details_change_container_placeholder"
             android:layout_width="124dp"
             android:layout_height="24dp"
-            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.PlaceHolder"
+            android:theme="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
             app:layout_constraintEnd_toEndOf="@+id/asset_details_average_container_placeholder"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/asset_details_average_container_placeholder"
@@ -89,8 +90,6 @@
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/asset_details_low_container_placeholder" />

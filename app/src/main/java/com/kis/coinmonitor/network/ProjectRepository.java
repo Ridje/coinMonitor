@@ -36,12 +36,13 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
     private static final Integer LIMIT_PER_DOWNLOAD = 20;
 
 
-    private final MutableLiveData<Boolean> isAssetsListDownloading = new MutableLiveData<>();
-    private final MutableLiveData<List<Asset>> assetsLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<Asset>> updatedAssetsPricesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isPriceUpdatingWorks = new MutableLiveData<>();
-    private final MutableLiveData<Asset> downloadedAssetHistoryLiveData = new MutableLiveData<>();
-    private final MutableLiveData<AssetHistory> assetHistoryMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Asset>> assetsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isAssetsListDownloading = new MutableLiveData<>();
+
+    private MutableLiveData<Asset> downloadedAssetHistoryLiveData = new MutableLiveData<>();
+    private MutableLiveData<AssetHistory> assetHistoryMutableLiveData = new MutableLiveData<>();
+
     private final List<Asset> assets = new ArrayList<>();
     private PricesWebsocket websocketPricesUpdated;
 
@@ -51,6 +52,10 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
                 .build();
         coinCapAssetsService = retrofit.create(CoinCapService.AssetsService.class);
         websocketPricesUpdated = new PricesWebsocket(this);
+    }
+
+    public void initNewLiveData() {
+        assetHistoryMutableLiveData = new MutableLiveData<>();
     }
 
     public synchronized static ProjectRepository getInstance() {
@@ -162,10 +167,6 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
         return updatedAssetsPricesLiveData;
     }
 
-    public LiveData<Boolean> getIsPriceUpdatingWorksLiveData() {
-        return isPriceUpdatingWorks;
-    }
-
     public LiveData<Asset> getDownloadedAssetHistoryLiveData() {
         return downloadedAssetHistoryLiveData;
     }
@@ -203,16 +204,16 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
 
     @Override
     public void onWebsocketConnectionFailure() {
-        isPriceUpdatingWorks.postValue(false);
+
     }
 
     @Override
     public void onWebsocketConnectionOpen() {
-        isPriceUpdatingWorks.postValue(true);
+
     }
 
     @Override
     public void onWebsocketConnectionClosed() {
-        isPriceUpdatingWorks.postValue(false);
+
     }
 }

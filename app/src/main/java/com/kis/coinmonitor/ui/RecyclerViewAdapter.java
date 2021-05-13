@@ -76,6 +76,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.itemClickListener = itemClickListener;
     }
 
+    public Asset getExpandedAsset() {
+        return expandedAsset;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -202,7 +206,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             boolean priceChanged = false;
 
-            if (tvAsset_name.getText().equals(asset.getName())) {
+            if (tvAsset_name.getText().equals(asset.getName()) && tvAsset_price_usd.getText().length() > 0) {
                 BigDecimal oldPriceValue = (BigDecimal) Locales.parseCurrency((String) tvAsset_price_usd.getText());
                 BigDecimal newFormattedValue = (BigDecimal) Locales.parseCurrency(Locales.formatCurrency(asset.getPriceUsd()));
                 BigDecimal differenceWithNewValue = oldPriceValue.subtract(newFormattedValue);
