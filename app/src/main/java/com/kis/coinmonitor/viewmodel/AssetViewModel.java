@@ -21,6 +21,7 @@ public class AssetViewModel extends AndroidViewModel {
 
     public AssetViewModel(@NonNull Application application, String assetID, ChartInterval chartInterval) {
         super(application);
+        ProjectRepository.getInstance().initNewLiveData();
         assetLiveData = ProjectRepository.getInstance().loadAssetData(assetID);
         Long chartEndAt = System.currentTimeMillis();
         assetHistoryLiveData = ProjectRepository

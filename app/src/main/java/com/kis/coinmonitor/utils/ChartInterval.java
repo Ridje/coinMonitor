@@ -29,10 +29,6 @@ public enum ChartInterval {
         this.title = title;
     }
 
-    @Override
-    public String toString() {
-        return intervalValue;
-    }
 
     public String getIntervalValue() {
         return intervalValue;

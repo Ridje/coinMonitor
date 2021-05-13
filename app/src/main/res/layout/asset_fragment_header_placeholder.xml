@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/asset_fragment_header_placeholder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginVertical="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/asset_fragment_rankView_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/shape_rank" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/asset_fragment_rank_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/asset_rank"
+            app:layout_constraintBottom_toBottomOf="@+id/asset_fragment_currencyChange_placeholder"
+            app:layout_constraintEnd_toEndOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintStart_toStartOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_currencyPrice_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_currencyName_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder.ImageClose"
+            android:layout_width="150dp"
+            android:layout_height="24sp"
+            android:text="@string/default_asset_name_and_symbol"
+            app:layout_constraintBottom_toTopOf="@+id/asset_fragment_currencyPrice_placeholder"
+            app:layout_constraintStart_toEndOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/asset_fragment_currencyPrice_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder.ImageClose"
+            android:layout_width="120dp"
+            android:layout_height="24sp"
+            android:text="@string/default_asset_priceUSD"
+            app:layout_constraintBottom_toTopOf="@+id/asset_fragment_currencyChange_placeholder"
+            app:layout_constraintStart_toEndOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_currencyName_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_currencyChange_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder.ImageClose"
+            android:layout_width="70dp"
+            android:layout_height="24sp"
+            android:text="@string/default_asset_changePercent"
+            android:textColor="@color/positive_number"
+            app:layout_constraintBottom_toBottomOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintStart_toEndOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_currencyPrice_placeholder" />
+
+
+        <View
+            android:id="@+id/asset_fragment_marketCap_title_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder.WithNewLine"
+            android:layout_width="100dp"
+            android:layout_height="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/asset_fragment_rankView_placeholder"
+            app:layout_constraintEnd_toStartOf="@+id/asset_fragment_marketVolume_title_placeholder"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_rankView_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_marketCap_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
+            android:layout_width="70dp"
+            android:layout_height="24sp"
+            android:layout_marginEnd="18dp"
+            app:layout_constraintEnd_toEndOf="@+id/asset_fragment_marketCap_title_placeholder"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/asset_fragment_marketCap_title_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketCap_title_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_marketVolume_title_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
+            android:layout_width="100dp"
+            android:layout_height="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/asset_fragment_marketCap_title_placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/asset_fragment_marketCap_title_placeholder"
+            app:layout_constraintTop_toTopOf="@+id/asset_fragment_marketCap_title_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_marketVolume_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
+            android:layout_width="70dp"
+            android:layout_height="24sp"
+            app:layout_constraintEnd_toEndOf="@+id/asset_fragment_marketVolume_title_placeholder"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/asset_fragment_marketVolume_title_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketVolume_title_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_marketSupply_title_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder.WithNewLine"
+            android:layout_width="100dp"
+            android:layout_height="16sp"
+            app:layout_constraintStart_toStartOf="@+id/asset_fragment_marketCap_title_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketCap_placeholder" />
+
+        <View
+            android:id="@+id/asset_fragment_marketSupply_placeholder"
+            style="@style/TextAppearance.CoinMonitor.Text.Value.Placeholder"
+            android:layout_width="70dp"
+            android:layout_height="24sp"
+            app:layout_constraintStart_toStartOf="@+id/asset_fragment_marketSupply_title_placeholder"
+            app:layout_constraintTop_toBottomOf="@+id/asset_fragment_marketSupply_title_placeholder" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

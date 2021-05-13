@@ -16,7 +16,6 @@ public class AssetsListViewModel extends AndroidViewModel  {
     private final LiveData<List<Asset>> assetsListObservable;
     private final LiveData<Boolean> isAssetsListDownloading;
     private final LiveData<List<Asset>> updatedAssetsPricesLiveData;
-    private final LiveData<Boolean> isPriceUpdatingWorks;
     private final LiveData<Asset> downloadedAssetHistoryLiveData;
 
     public AssetsListViewModel(@NonNull Application application) {
@@ -24,7 +23,6 @@ public class AssetsListViewModel extends AndroidViewModel  {
         isAssetsListDownloading = ProjectRepository.getInstance().getIsAssetsListDownloadingLiveData();
         assetsListObservable = ProjectRepository.getInstance().getAssetsLiveData();
         updatedAssetsPricesLiveData = ProjectRepository.getInstance().getUpdatedAssetsPricesLiveData();
-        isPriceUpdatingWorks = ProjectRepository.getInstance().getIsPriceUpdatingWorksLiveData();
         downloadedAssetHistoryLiveData = ProjectRepository.getInstance().getDownloadedAssetHistoryLiveData();
         downloadAssets();
     }
@@ -49,9 +47,6 @@ public class AssetsListViewModel extends AndroidViewModel  {
         return updatedAssetsPricesLiveData;
     }
 
-    public LiveData<Boolean> getIsPriceUpdatingWorks() {
-        return isPriceUpdatingWorks;
-    }
 
     public LiveData<Asset> getDownloadedAssetHistoryLiveData() {
         return downloadedAssetHistoryLiveData;

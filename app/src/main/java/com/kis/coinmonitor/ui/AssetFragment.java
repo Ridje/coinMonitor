@@ -1,5 +1,6 @@
 package com.kis.coinmonitor.ui;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -9,12 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
@@ -47,6 +52,7 @@ public class AssetFragment extends Fragment {
     private static final String LOG_TAG = AssetFragment.class.getName();
     private AssetViewModel mViewModel;
     private static final String KEY_ASSET_ID = "asset_id";
+    private static final String KEY_CHART_INTERVAL = "asset_chart_interval";
 
     private TextView tvRank;
     private TextView tvName;
@@ -57,9 +63,16 @@ public class AssetFragment extends Fragment {
     private TextView tvVolume24Hr;
     private TextView tvMarketSupply;
 
+    private FrameLayout flAssetDetailsContainer;
+    private View lAssetDetailsData;
+    private ShimmerFrameLayout lAssetDetailsPlaceholder;
+
+    private ConstraintLayout flAssetHeaderContainer;
+    private ShimmerFrameLayout lAssetHeaderPlaceholder;
 
     private TabLayout tlAssetChartIntervalSwitcher;
     private ChartInterval lastChartInterval = null;
+    private Button btDetailsPlaceholder;
 
     private ImageView ivAssetLogo;
     private TextView tvDetailsName;
@@ -67,6 +80,15 @@ public class AssetFragment extends Fragment {
     private TextView tvDetailsLow;
     private TextView tvDetailsAverage;
     private TextView tvDetailsChange;
+
+    @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (lastChartInterval != null) {
+            outState.putString(KEY_CHART_INTERVAL, lastChartInterval.name());
+        }
+    }
+
     private LineChart lcAssetHistory;
 
     public static AssetFragment newInstance(String assetID) {
@@ -87,7 +109,6 @@ public class AssetFragment extends Fragment {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         tvRank = view.findViewById(R.id.asset_fragment_rank);
         tvName = view.findViewById(R.id.asset_fragment_currencyName);
         tvPrice = view.findViewById(R.id.asset_fragment_currencyPrice);
@@ -98,23 +119,53 @@ public class AssetFragment extends Fragment {
         tvMarketSupply = view.findViewById(R.id.asset_fragment_marketSupply);
 
 
+        flAssetDetailsContainer = view.findViewById(R.id.asset_fragment_details_frame);
+        lAssetDetailsData = flAssetDetailsContainer.findViewById(R.id.asset_details_layout);
+        lAssetDetailsData.setVisibility(View.GONE);
+        lAssetDetailsPlaceholder = flAssetDetailsContainer.findViewById(R.id.asset_details_layout_placeholder);
+        lAssetDetailsPlaceholder.setVisibility(View.VISIBLE);
+        lAssetDetailsPlaceholder.startShimmer();
+        btDetailsPlaceholder = lAssetDetailsPlaceholder.findViewById(R.id.asset_button_show_details_placeholder);
+        btDetailsPlaceholder.setVisibility(View.GONE);
+
+
+        flAssetHeaderContainer = view.findViewById(R.id.asset_fragment_header_container);
+        flAssetHeaderContainer.setVisibility(View.GONE);
+        lAssetHeaderPlaceholder = view.findViewById(R.id.asset_fragment_header_placeholder);
+        lAssetHeaderPlaceholder.setVisibility(View.VISIBLE);
+        lAssetHeaderPlaceholder.startShimmer();
+
+
         tlAssetChartIntervalSwitcher = view.findViewById(R.id.asset_details_chart_tab);
         tlAssetChartIntervalSwitcher.setVisibility(View.VISIBLE);
 
         String[] intervalsArray = getResources().getStringArray(R.array.allowed_chart_intervals);
 
-        for (int i = 0; i < intervalsArray.length; i++) {
-            ChartInterval newInterval = ChartInterval.valueOf(intervalsArray[i]);
+        if (savedInstanceState != null) {
+            String savedChartInterval = savedInstanceState.getString(KEY_CHART_INTERVAL);
+            if (savedChartInterval != null) {
+                lastChartInterval = ChartInterval.valueOf(savedChartInterval);
+            }
+        }
+
+        for (String s : intervalsArray) {
+            ChartInterval newInterval = ChartInterval.valueOf(s);
             TabLayout.Tab tab = tlAssetChartIntervalSwitcher.newTab();
             tab.setText(newInterval.getTitle());
             tab.setTag(newInterval);
             tlAssetChartIntervalSwitcher.addTab(tab);
+            if (lastChartInterval == newInterval) {
+                tlAssetChartIntervalSwitcher.selectTab(tab);
+            }
         }
 
         tlAssetChartIntervalSwitcher.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 lastChartInterval = (ChartInterval) tab.getTag();
+                lAssetDetailsData.setVisibility(View.GONE);
+                lAssetDetailsPlaceholder.setVisibility(View.VISIBLE);
+                lAssetDetailsPlaceholder.startShimmer();
                 switchChartPeriod(lastChartInterval);
             }
 
@@ -145,12 +196,8 @@ public class AssetFragment extends Fragment {
     }
 
     private void subscribeUI() {
-        mViewModel.getAssetLiveData().observe(getViewLifecycleOwner(), asset -> {
-            bindAssetData(asset);
-        });
-        mViewModel.getAssetHistoryLiveData().observe(getViewLifecycleOwner(), assetHistory -> {
-            bindAssetHistory(assetHistory);
-        });
+        mViewModel.getAssetLiveData().observe(getViewLifecycleOwner(), this::bindAssetData);
+        mViewModel.getAssetHistoryLiveData().observe(getViewLifecycleOwner(), this::bindAssetHistory);
 
     }
 
@@ -175,6 +222,9 @@ public class AssetFragment extends Fragment {
                 .error(R.mipmap.ic_default_asset_image).into(ivAssetLogo);
 
         tvDetailsName.setText(String.format("%s (%s)", asset.getName(), asset.getSymbol()));
+        lAssetHeaderPlaceholder.stopShimmer();
+        lAssetHeaderPlaceholder.setVisibility(View.GONE);
+        flAssetHeaderContainer.setVisibility(View.VISIBLE);
     }
 
     private void bindAssetHistory(AssetHistory assetHistory) {
@@ -260,6 +310,9 @@ public class AssetFragment extends Fragment {
 
         lcAssetHistory.animateX(200);
         lcAssetHistory.invalidate();
+        lAssetDetailsPlaceholder.stopShimmer();
+        lAssetDetailsPlaceholder.setVisibility(View.GONE);
+        lAssetDetailsData.setVisibility(View.VISIBLE);
     }
 
     private void switchChartPeriod(ChartInterval chartInterval) {
