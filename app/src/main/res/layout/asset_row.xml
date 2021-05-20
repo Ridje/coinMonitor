@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/asset_details_hidden_frame">
             <include
-                layout="@layout/asset_details_shimmer_placeholder" />
+                layout="@layout/asset_details_placeholder" />
             <include
                 layout="@layout/asset_details" />
         </FrameLayout>

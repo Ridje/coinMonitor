@@ -118,7 +118,8 @@ public class AssetsListFragment extends Fragment implements RecyclerViewAdapter.
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setOnItemClickListener(this);
-        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        //I don't like how expand animation works and I don't need original change animation
+        recyclerView.setItemAnimator(null);
     }
 
     private void initScrollListener() {

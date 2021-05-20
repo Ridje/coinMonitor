@@ -15,6 +15,9 @@ import com.kis.coinmonitor.model.websocketAPI.Prices;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -46,9 +49,12 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
     private final List<Asset> assets = new ArrayList<>();
     private PricesWebsocket websocketPricesUpdated;
 
+    private final Executor executor = Executors.newFixedThreadPool(2);;
+
     private ProjectRepository() {
         Retrofit retrofit = new Retrofit.Builder() .baseUrl(CoinCapService.HTTPS_API_COINCAP_URL)
                 .addConverterFactory(JacksonConverterFactory.create())
+                .callbackExecutor(executor)
                 .build();
         coinCapAssetsService = retrofit.create(CoinCapService.AssetsService.class);
         websocketPricesUpdated = new PricesWebsocket(this);
@@ -76,16 +82,16 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
             public void onResponse(Call<Assets> call, Response<Assets> response) {
                 if (response.isSuccessful()) {
                     assets.addAll(response.body().getData());
-                    assetsLiveData.setValue(assets);
-                    isAssetsListDownloading.setValue(false);
+                    assetsLiveData.postValue(assets);
+                    isAssetsListDownloading.postValue(false);
                     currentOffset += LIMIT_PER_DOWNLOAD;
-                    //setupPriceUpdater();
+                    setupPriceUpdater();
                 }
             }
 
             @Override
             public void onFailure(Call<Assets> call, Throwable t) {
-                isAssetsListDownloading.setValue(false);
+                isAssetsListDownloading.postValue(false);
             //TODO: failure handling
             }
         });
@@ -103,7 +109,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
                     public void onResponse(Call<AssetHistory> call, Response<AssetHistory> response) {
                         if (response.isSuccessful()) {
                             asset.setHistory(response.body());
-                            downloadedAssetHistoryLiveData.setValue(asset);
+                            downloadedAssetHistoryLiveData.postValue(asset);
                         }
                     }
 
@@ -120,7 +126,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
             @Override
             public void onResponse(Call<AssetHistory> call, Response<AssetHistory> response) {
                 if (response.isSuccessful()) {
-                    assetHistoryMutableLiveData.setValue(response.body());
+                    assetHistoryMutableLiveData.postValue(response.body());
                 }
             }
 
@@ -138,7 +144,7 @@ public class ProjectRepository implements OnWebsocketMessageAccepted {
             @Override
             public void onResponse(Call<AssetByID> call, Response<AssetByID> response) {
                 if (response.isSuccessful()) {
-                    loadedAsset.setValue(response.body().getAsset());
+                    loadedAsset.postValue(response.body().getAsset());
                 }
             }
 
