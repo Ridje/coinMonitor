@@ -11,10 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <include layout="@layout/asset_loading">
-    </include>
+
+    <include
+        android:id="@+id/include_progress_bar"
+        layout="@layout/asset_loading"></include>
 </androidx.constraintlayout.widget.ConstraintLayout>
