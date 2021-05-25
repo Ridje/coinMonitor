@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_coins"
+        android:orderInCategory="1"
+        android:title="Coins"
+        android:icon="@drawable/ic_coins"/>
+    <item
+        android:id="@+id/navigation_favorites"
+        android:orderInCategory="2"
+        android:title="Favourites"
+        android:icon="@drawable/ic_star"/>
+</menu>

@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.ui.AssetsListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,14 +17,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initAppBar();
         if (savedInstanceState == null) {
             showDefaultFragment();
         }
+        ((BottomNavigationView) findViewById(R.id.bottom_navigation_menu)).setOnNavigationItemSelectedListener(item -> {
+                    switchFragment(item.getItemId());
+                    return true;
+                }
+        );
+    }
+
+    void initAppBar() {
+
     }
 
     private void showDefaultFragment() {
 
         showFragment(AssetsListFragment.newInstance());
+    }
+
+    private void switchFragment(Integer id) {
+        switch (id) {
+            case R.id.navigation_coins:
+                showFragment(AssetsListFragment.newInstance());
+            case R.id.navigation_favorites:
+                showFragment(AssetsListFragment.newInstance());
+        }
     }
 
     public void showFragment(Fragment fragment, boolean addToBackStack, int transitionAnimation) {
