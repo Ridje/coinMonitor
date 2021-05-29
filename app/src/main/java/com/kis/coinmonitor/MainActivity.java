@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initAppBar();
         if (savedInstanceState == null) {
             showDefaultFragment();
         }
@@ -28,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    void initAppBar() {
-
-    }
 
     private void showDefaultFragment() {
 
@@ -41,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.navigation_coins:
                 showFragment(AssetsListFragment.newInstance());
+                break;
             case R.id.navigation_favorites:
-                showFragment(AssetsListFragment.newInstance());
+                showFragment(AssetsListFragment.newInstance(true));
+                break;
         }
     }
 

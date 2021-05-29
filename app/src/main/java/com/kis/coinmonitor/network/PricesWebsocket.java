@@ -23,12 +23,13 @@ public class PricesWebsocket  {
     private Boolean mWebsocketOpen = false;
 
 
-    public PricesWebsocket(OnWebsocketMessageAccepted messagesListener) {
+    public PricesWebsocket() {
         this.mHttpClient = new OkHttpClient();
-        this.mMessagesListener = messagesListener;
     }
 
-    public void setup(String assetsRoster) {
+    public void setup(OnWebsocketMessageAccepted listener, String assetsRoster) {
+
+        mMessagesListener = listener;
 
         mRequest = new Request.Builder().url(WEBSOCKET_URI_BASE + assetsRoster).build();
 
@@ -50,7 +51,6 @@ public class PricesWebsocket  {
         if (mWebsocketOpen) {
             close(STATUS_CODE_OK, CLOSE_REASON_ASSETS_ROSTER_CHANGED);
         }
-
         mWebsocketPrices = mHttpClient.newWebSocket(mRequest, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {

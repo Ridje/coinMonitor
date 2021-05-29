@@ -3,17 +3,20 @@ package com.kis.coinmonitor.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -24,12 +27,14 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.card.MaterialCardView;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
 import com.kis.coinmonitor.model.standardAPI.AssetHistory;
 import com.kis.coinmonitor.model.standardAPI.AssetHistoryValue;
 import com.kis.coinmonitor.utils.CurrencyMarkerView;
 import com.kis.coinmonitor.utils.Locales;
+import com.kis.coinmonitor.utils.Preferences;
 import com.kis.coinmonitor.utils.TimestampFormatter;
 import com.squareup.picasso.Picasso;
 
@@ -37,17 +42,22 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public List<Asset> mItemList;
     private OnItemClickListener itemClickListener;
     private Asset expandedAsset = null;
-    private Asset previousExpandedAsset = null;
+    private Fragment contextMenuFragment = null;
+    private Set<String> favouriteCoins = null;
 
-    public RecyclerViewAdapter() {
+    public RecyclerViewAdapter(Fragment contextMenuFragment) {
+        this.contextMenuFragment = contextMenuFragment;
         mItemList = new ArrayList<>();
+        Preferences.getInstance(contextMenuFragment.requireActivity().getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
+        favouriteCoins = Preferences.getInstance(contextMenuFragment.requireActivity().getApplicationContext()).readSet(Preferences.getKeySettingFavouriteCoins());
     }
 
     public void addAssets(List<Asset> assets) {
@@ -57,6 +67,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 this.notifyItemInserted(mItemList.size() - 1);
             }
         }
+    }
+
+    public void setAssets(List<Asset> assets) {
+        mItemList = assets;
+        notifyDataSetChanged();
     }
 
     public void updateAssets(List<Asset> assets) {
@@ -101,10 +116,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mItemList == null ? 0 : mItemList.size();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        favouriteCoins = Preferences.getInstance(contextMenuFragment.requireActivity().getApplicationContext()).readSet(Preferences.getKeySettingFavouriteCoins());
+    }
+
 
     public interface OnItemClickListener {
         void onItemClick(View view , int position);
         void onButtonItemClick(View view, int position);
+        void onItemLongClickListener(View view, int position);
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -115,7 +136,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView tvAsset_symbol;
         final TextView tvAsset_change_24hrs;
         final TextView tvAsset_market_24hrs;
-        final CardView cardView;
+        final MaterialCardView cardView;
         final ValueAnimator positiveChange;
         final ValueAnimator negativeChange;
         final LineChart assetChart;
@@ -188,6 +209,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     itemClickListener.onButtonItemClick(v, getAdapterPosition());
                 }
             });
+
+            itemView.setOnLongClickListener(v -> {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemLongClickListener(v, getAdapterPosition());
+                }
+                return false;
+            });
+
+            registerContextMenu(itemView);
         }
 
 
@@ -212,6 +242,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAsset_name.setText(asset.getName());
             tvAsset_price_usd.setText(Locales.formatCurrency(asset.getPriceUsd()));
             tvAsset_rank.setText(asset.getRank().toString());
+            if (favouriteCoins.contains(asset.getId())) {
+                tvAsset_change_24hrs.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+                tvAsset_name.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+                tvAsset_price_usd.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+                tvAsset_rank.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+                tvAsset_market_24hrs.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+                tvAsset_symbol.setTextAppearance(R.style.TextAppearance_CoinMonitor_FavText);
+            } else {
+                tvAsset_change_24hrs.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+                tvAsset_name.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+                tvAsset_price_usd.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+                tvAsset_rank.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+                tvAsset_market_24hrs.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+                tvAsset_symbol.setTextAppearance(R.style.TextAppearance_CoinMonitor_OrdText);
+            }
             tvAsset_symbol.setText(asset.getSymbol());
             tvAsset_change_24hrs.setText(Locales.formatCurrencyWithPercents(asset.getChangePercent24Hr()));
             tvAsset_market_24hrs.setText(Locales.formatCompactCurrency(asset.getVolumeUsd24Hr()));
@@ -327,5 +372,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
+        void registerContextMenu(@NonNull View itemView) {
+            if (contextMenuFragment != null){
+                contextMenuFragment.registerForContextMenu(itemView);
+            }
+        }
     }
 }
