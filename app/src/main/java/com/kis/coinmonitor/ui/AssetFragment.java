@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.kis.coinmonitor.R;
 import com.kis.coinmonitor.model.standardAPI.Asset;
@@ -189,8 +187,7 @@ public class AssetFragment extends Fragment {
         lcAssetHistory = view.findViewById(R.id.asset_details_chart);
 
         AssetViewModel.Factory factory = new AssetViewModel.Factory(requireActivity().getApplication()
-                , requireArguments().getString(KEY_ASSET_ID)
-                , ChartInterval.ONE_DAY);
+                , requireArguments().getString(KEY_ASSET_ID));
         mViewModel = new ViewModelProvider(this, factory).get(AssetViewModel.class);
         subscribeUI();
     }
@@ -198,7 +195,6 @@ public class AssetFragment extends Fragment {
     private void subscribeUI() {
         mViewModel.getAssetLiveData().observe(getViewLifecycleOwner(), this::bindAssetData);
         mViewModel.getAssetHistoryLiveData().observe(getViewLifecycleOwner(), this::bindAssetHistory);
-
     }
 
     private void bindAssetData(Asset asset) {
@@ -316,6 +312,6 @@ public class AssetFragment extends Fragment {
     }
 
     private void switchChartPeriod(ChartInterval chartInterval) {
-        mViewModel.loadAssetHistory(requireArguments().getString(KEY_ASSET_ID), chartInterval);
+        mViewModel.downloadAssetHistory(chartInterval);
     }
 }
