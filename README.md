@@ -9,3 +9,7 @@ Used technologies:
 - Local data: Shared preferences
 - Api: coincap.io
 - roadmap: searching, wrap websockets in RxJava, replace linear layouts with constraint layout, rework design with material framework
+
+how it looks like:
+
+https://user-images.githubusercontent.com/4568712/120104873-53634280-c15f-11eb-9858-acce37fadb7f.mp4
