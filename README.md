@@ -8,7 +8,7 @@ Used technologies:
 - Async work: RxJava 3
 - Local data: Shared preferences
 - Api: coincap.io
-- roadmap: searching, wrap websockets in RxJava, replace linear layouts with constraint layout, rework design with material framework
+- roadmap: searching, wrap websockets in RxJava, replace linear layouts with constraint layout, rework design with material framework, depency injection (probably hilt) to integrate test framework
 
 how it looks like:
 
