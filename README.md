@@ -2,7 +2,7 @@
 This is real-time cryptocoin monitor. Allow you to save favourite coins and monitor it's currency in real time.
 Used technologies:
 - Language: Java
-- Minim SDK version: 26
+- Min SDK version: 26
 - Architecture: MVVM
 - Network: OkHttp (websockets), Retrofit
 - Async work: RxJava 3
